@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import('@/views/RecipesView.vue'),
     },
     {
+      path: '/compras',
+      name: 'shopping',
+      component: () => import('@/views/ShoppingListView.vue'),
+    },
+    {
       path: '/recetas/crear',
       name: 'recipe-create',
       component: () => import('@/views/RecipeCreateView.vue'),
