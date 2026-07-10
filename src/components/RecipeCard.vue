@@ -1,27 +1,38 @@
 <template>
   <RouterLink
     :to="`/recetas/${recipe.id}`"
-    class="block bg-white border border-gray-200 rounded-xl p-4 hover:border-emerald-400 hover:shadow-sm transition-all group"
+    class="group card p-4 flex flex-col pressable hover:shadow-warm hover:border-brand/30"
   >
     <div class="flex items-start justify-between gap-2">
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 flex-wrap">
-          <p class="font-semibold text-gray-800 group-hover:text-emerald-600 truncate">{{ recipe.name }}</p>
-          <span v-if="recipe.is_ai_generated" class="text-xs bg-violet-100 text-violet-700 rounded-full px-2 py-0.5 shrink-0">✨ IA</span>
+        <h3 class="font-display text-lg font-semibold text-ink leading-snug truncate group-hover:text-brand transition-colors">
+          {{ recipe.name }}
+        </h3>
+        <p class="text-sm text-ink-soft mt-1 line-clamp-2 leading-normal">{{ recipe.description }}</p>
+        <div v-if="recipe.rating || recipe.cooked" class="mt-1.5">
+          <StarRating v-if="recipe.rating" :model-value="recipe.rating" readonly size="sm" />
+          <span v-else class="text-[0.7rem] font-semibold text-herb-ink bg-herb-tint rounded-full px-2 py-0.5">✓ Preparada</span>
         </div>
-        <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ recipe.description }}</p>
       </div>
+      <span
+        v-if="recipe.is_ai_generated"
+        class="shrink-0 inline-flex items-center gap-1 text-[0.7rem] font-semibold bg-gold-tint text-gold-ink rounded-full px-2 py-0.5"
+      >
+        ✨ IA
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3 mt-4 pt-3 border-t border-line-soft text-xs text-ink-soft tabular-nums">
+      <span class="inline-flex items-center gap-1">🍽️ {{ recipe.servings }} porc.</span>
+      <span class="inline-flex items-center gap-1">💰 ${{ recipe.total_cost.toLocaleString('es-CO') }}</span>
+      <span class="inline-flex items-center gap-1 font-medium text-ink">${{ costPerServing }}<span class="text-ink-faint font-normal">/porc.</span></span>
       <button
         @click.prevent="$emit('delete', recipe.id)"
-        class="text-gray-300 hover:text-red-400 transition-colors text-sm shrink-0"
+        class="ml-auto grid place-items-center w-7 h-7 rounded-lg text-ink-faint hover:text-danger hover:bg-danger-tint pressable"
+        aria-label="Eliminar receta"
       >
         🗑️
       </button>
-    </div>
-    <div class="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
-      <span>🍽️ {{ recipe.servings }} porciones</span>
-      <span>💰 ${{ recipe.total_cost.toLocaleString('es-CO') }}</span>
-      <span>💵 ${{ costPerServing }}/porción</span>
     </div>
   </RouterLink>
 </template>
@@ -29,6 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import StarRating from '@/components/StarRating.vue'
 import type { Recipe } from '@/types'
 
 const props = defineProps<{ recipe: Recipe }>()
