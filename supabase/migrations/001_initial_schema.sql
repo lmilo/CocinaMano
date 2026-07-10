@@ -34,12 +34,13 @@ CREATE TYPE unit_type AS ENUM (
 -- Products (user inventory)
 CREATE TABLE products (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id     UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   name        TEXT NOT NULL,
   category    product_category NOT NULL DEFAULT 'despensa',
   quantity    NUMERIC(10, 3) NOT NULL DEFAULT 0,
   unit        unit_type NOT NULL DEFAULT 'unidades',
   unit_price  NUMERIC(12, 2) NOT NULL DEFAULT 0,
+  expiry_date DATE,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -47,12 +48,14 @@ CREATE TABLE products (
 -- Recipes
 CREATE TABLE recipes (
   id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id          UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id          UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
   name             TEXT NOT NULL,
   description      TEXT NOT NULL DEFAULT '',
   servings         INTEGER NOT NULL DEFAULT 4,
   total_cost       NUMERIC(12, 2) NOT NULL DEFAULT 0,
   is_ai_generated  BOOLEAN NOT NULL DEFAULT FALSE,
+  cooked           BOOLEAN NOT NULL DEFAULT FALSE,
+  rating           SMALLINT CHECK (rating BETWEEN 1 AND 5),
   steps            JSONB NOT NULL DEFAULT '[]'::jsonb,
   cuisine_type     TEXT,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -65,7 +68,7 @@ CREATE TABLE recipe_ingredients (
   recipe_id        UUID NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
   product_id       UUID REFERENCES products(id) ON DELETE SET NULL,
   ingredient_name  TEXT NOT NULL,
-  quantity         NUMERIC(10, 3) NOT NULL DEFAULT 0,
+  quantity         NUMERIC(10, 3) NOT NULL CHECK (quantity > 0),
   unit             unit_type NOT NULL DEFAULT 'unidades',
   unit_cost        NUMERIC(12, 2) NOT NULL DEFAULT 0
 );
@@ -99,6 +102,10 @@ CREATE TRIGGER recipes_updated_at
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE recipe_ingredients ENABLE ROW LEVEL SECURITY;
+
+-- Grants for the authenticated role (RLS still restricts to each user's own rows)
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON products, recipes, recipe_ingredients TO authenticated;
 
 -- Products: users only see/modify their own rows
 CREATE POLICY "products: own rows only" ON products

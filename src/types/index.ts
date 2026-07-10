@@ -25,6 +25,7 @@ export interface Product {
   quantity: number
   unit: Unit
   unit_price: number
+  expiry_date: string | null
   created_at: string
   updated_at: string
 }
@@ -35,6 +36,23 @@ export interface ProductInsert {
   quantity: number
   unit: Unit
   unit_price: number
+  expiry_date: string | null
+}
+
+export interface ShoppingItem {
+  id: string
+  user_id: string
+  name: string
+  quantity: number | null
+  unit: Unit | null
+  checked: boolean
+  created_at: string
+}
+
+export interface ShoppingItemInsert {
+  name: string
+  quantity?: number | null
+  unit?: Unit | null
 }
 
 export interface RecipeStep {
@@ -68,6 +86,8 @@ export interface Recipe {
   servings: number
   total_cost: number
   is_ai_generated: boolean
+  cooked: boolean
+  rating: number | null
   steps: RecipeStep[]
   cuisine_type: string | null
   created_at: string
