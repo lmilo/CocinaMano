@@ -20,13 +20,8 @@ export const useAuthStore = defineStore('auth', () => {
     })
   }
 
-  async function signIn(email: string, password: string) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
-  }
-
-  async function signUp(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password })
+  async function signInAnonymously() {
+    const { error } = await supabase.auth.signInAnonymously()
     if (error) throw error
   }
 
@@ -35,5 +30,5 @@ export const useAuthStore = defineStore('auth', () => {
     if (error) throw error
   }
 
-  return { user, session, loading, init, signIn, signUp, signOut }
+  return { user, session, loading, init, signInAnonymously, signOut }
 })

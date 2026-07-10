@@ -1,56 +1,52 @@
 <template>
-  <div class="min-h-screen bg-emerald-50 flex items-center justify-center px-4">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 w-full max-w-sm p-8">
-      <h1 class="text-2xl font-bold text-emerald-600 text-center mb-1">🍳 Cocina a Mano</h1>
-      <p class="text-center text-gray-500 text-sm mb-8">
-        {{ mode === 'login' ? 'Inicia sesión para continuar' : 'Crea tu cuenta gratuita' }}
+  <div class="relative min-h-screen flex items-center justify-center px-5 overflow-hidden">
+    <!-- Fondo cálido decorativo -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10"
+      style="
+        background:
+          radial-gradient(60% 50% at 15% 0%, var(--color-gold-tint), transparent 70%),
+          radial-gradient(55% 45% at 95% 100%, var(--color-brand-tint), transparent 70%);
+      "
+    />
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -top-10 -right-6 text-[7rem] opacity-10 rotate-12 select-none"
+    >
+      🍅
+    </div>
+
+    <div class="w-full max-w-sm text-center rise-in">
+      <span
+        class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-brand text-white text-3xl shadow-warm mb-7"
+      >
+        🍳
+      </span>
+
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand mb-3">
+        Tu despensa, tus recetas
+      </p>
+      <h1 class="font-display text-[2.7rem] leading-[1.05] font-semibold text-ink mb-4">
+        Cocina a Mano
+      </h1>
+      <p class="text-ink-soft text-[0.95rem] leading-relaxed mb-9 text-balance">
+        Lleva el inventario de tu cocina y descubre qué preparar con lo que ya tienes en casa.
       </p>
 
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-          <input
-            v-model="email"
-            type="email"
-            required
-            autocomplete="email"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            placeholder="tuemail@ejemplo.com"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-          <input
-            v-model="password"
-            type="password"
-            required
-            autocomplete="current-password"
-            minlength="8"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            placeholder="Mínimo 8 caracteres"
-          />
-        </div>
+      <p v-if="errorMsg" class="text-danger text-sm mb-4">{{ errorMsg }}</p>
 
-        <p v-if="errorMsg" class="text-red-500 text-sm text-center">{{ errorMsg }}</p>
-        <p v-if="successMsg" class="text-emerald-600 text-sm text-center">{{ successMsg }}</p>
+      <button
+        @click="handleEnter"
+        :disabled="loading"
+        class="group w-full bg-brand hover:bg-brand-strong disabled:opacity-60 text-white font-semibold text-[0.95rem] py-3.5 rounded-2xl shadow-warm pressable inline-flex items-center justify-center gap-2"
+      >
+        {{ loading ? 'Entrando…' : 'Entrar a mi cocina' }}
+        <span v-if="!loading" class="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+      </button>
 
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold py-2 rounded-lg transition-colors"
-        >
-          {{ loading ? 'Cargando...' : mode === 'login' ? 'Iniciar sesión' : 'Registrarse' }}
-        </button>
-      </form>
-
-      <p class="text-center text-sm text-gray-500 mt-6">
-        {{ mode === 'login' ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?' }}
-        <button
-          @click="toggleMode"
-          class="text-emerald-600 font-medium hover:underline ml-1"
-        >
-          {{ mode === 'login' ? 'Regístrate' : 'Inicia sesión' }}
-        </button>
+      <p class="text-xs text-ink-faint mt-6 leading-relaxed">
+        Sin correo ni contraseña. Tu sesión se guarda en este navegador.
       </p>
     </div>
   </div>
@@ -60,37 +56,22 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { logError } from '@/lib/errors'
 
 const authStore = useAuthStore()
 const router = useRouter()
 
-const mode = ref<'login' | 'register'>('login')
-const email = ref('')
-const password = ref('')
 const loading = ref(false)
 const errorMsg = ref('')
-const successMsg = ref('')
 
-function toggleMode() {
-  mode.value = mode.value === 'login' ? 'register' : 'login'
-  errorMsg.value = ''
-  successMsg.value = ''
-}
-
-async function handleSubmit() {
+async function handleEnter() {
   loading.value = true
   errorMsg.value = ''
-  successMsg.value = ''
   try {
-    if (mode.value === 'login') {
-      await authStore.signIn(email.value, password.value)
-      router.push('/')
-    } else {
-      await authStore.signUp(email.value, password.value)
-      successMsg.value = 'Revisa tu correo para confirmar tu cuenta.'
-    }
+    await authStore.signInAnonymously()
+    router.push('/')
   } catch (err: unknown) {
-    errorMsg.value = err instanceof Error ? err.message : 'Ocurrió un error. Intenta de nuevo.'
+    errorMsg.value = (await logError(err, 'entrar')).message
   } finally {
     loading.value = false
   }
