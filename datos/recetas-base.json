@@ -1,0 +1,2662 @@
+[
+  {
+    "id": "base-01",
+    "origen": "base",
+    "nombre": "Arroz con pollo",
+    "descripcion": "Clásico arroz colombiano con pollo tierno y vegetales.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "arroz",
+        "cantidad": 2,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "pollo",
+        "cantidad": 500,
+        "unidad": "g"
+      },
+      {
+        "nombre": "zanahoria",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe la cebolla y el ajo en aceite hasta dorar."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega el pollo troceado y sella por todos los lados."
+      },
+      {
+        "orden": 3,
+        "texto": "Añade la zanahoria en cubos, el arroz y 4 tazas de agua."
+      },
+      {
+        "orden": 4,
+        "texto": "Salpimienta, tapa y cocina a fuego bajo por 20 minutos."
+      }
+    ]
+  },
+  {
+    "id": "base-02",
+    "origen": "base",
+    "nombre": "Ajiaco bogotano",
+    "descripcion": "Sopa espesa bogotana con papas criollas, pollo y guascas.",
+    "porciones": 6,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "pollo",
+        "cantidad": 600,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa criolla",
+        "cantidad": 500,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa pastusa",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa sabanera",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "mazorca",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "guascas",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "crema de leche",
+        "cantidad": 100,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Hierve el pollo con cebolla y sal por 20 minutos."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega las papas en orden: sabanera, pastusa y criolla."
+      },
+      {
+        "orden": 3,
+        "texto": "Añade la mazorca y las guascas; cocina 30 min más."
+      },
+      {
+        "orden": 4,
+        "texto": "Sirve con crema de leche y alcaparras al gusto."
+      }
+    ]
+  },
+  {
+    "id": "base-03",
+    "origen": "base",
+    "nombre": "Bandeja paisa",
+    "descripcion": "El plato representativo antioqueño.",
+    "porciones": 2,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "frijoles",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "arroz",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "carne molida",
+        "cantidad": 150,
+        "unidad": "g"
+      },
+      {
+        "nombre": "chicharrón",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "chorizo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "plátano maduro",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aguacate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cocina los frijoles hasta suavizar."
+      },
+      {
+        "orden": 2,
+        "texto": "Prepara el arroz blanco aparte."
+      },
+      {
+        "orden": 3,
+        "texto": "Sofríe la carne molida, el chorizo y el chicharrón."
+      },
+      {
+        "orden": 4,
+        "texto": "Fríe el plátano en rodajas y los huevos."
+      },
+      {
+        "orden": 5,
+        "texto": "Sirve todos los componentes juntos con aguacate."
+      }
+    ]
+  },
+  {
+    "id": "base-04",
+    "origen": "base",
+    "nombre": "Sancocho de gallina",
+    "descripcion": "Caldo tradicional colombiano con gallina y tubérculos.",
+    "porciones": 6,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "gallina",
+        "cantidad": 1,
+        "unidad": "kg"
+      },
+      {
+        "nombre": "yuca",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "plátano verde",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "mazorca",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Trocea la gallina y hierve con ajo, cebolla y sal."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega plátano y mazorca a los 20 minutos."
+      },
+      {
+        "orden": 3,
+        "texto": "Añade yuca y papa; cocina 25 minutos más."
+      },
+      {
+        "orden": 4,
+        "texto": "Rectifica sal y sirve con cilantro fresco."
+      }
+    ]
+  },
+  {
+    "id": "base-05",
+    "origen": "base",
+    "nombre": "Fritanga casera",
+    "descripcion": "Picada colombiana con carnes fritas y acompañamientos.",
+    "porciones": 3,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "longaniza",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "morcilla",
+        "cantidad": 150,
+        "unidad": "g"
+      },
+      {
+        "nombre": "costilla de cerdo",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "yuca",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cocina la yuca y la papa hasta suavizar, luego fríe."
+      },
+      {
+        "orden": 2,
+        "texto": "Asa en parrilla o sartén las carnes."
+      },
+      {
+        "orden": 3,
+        "texto": "Sirve todo junto con ají y limón."
+      }
+    ]
+  },
+  {
+    "id": "base-06",
+    "origen": "base",
+    "nombre": "Tacos de carne asada",
+    "descripcion": "Tacos mexicanos con carne marinada a la plancha.",
+    "porciones": 4,
+    "cocina": "mexicana",
+    "ingredientes": [
+      {
+        "nombre": "carne de res",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tortillas de maíz",
+        "cantidad": 8,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Marina la carne con ajo, sal y jugo de limón por 30 min."
+      },
+      {
+        "orden": 2,
+        "texto": "Asa a la plancha bien caliente."
+      },
+      {
+        "orden": 3,
+        "texto": "Corta en tiras y sirve en tortillas con cebolla y cilantro."
+      }
+    ]
+  },
+  {
+    "id": "base-07",
+    "origen": "base",
+    "nombre": "Guacamole",
+    "descripcion": "Dip cremoso de aguacate con tomate y limón.",
+    "porciones": 4,
+    "cocina": "mexicana",
+    "ingredientes": [
+      {
+        "nombre": "aguacate",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Machaca el aguacate hasta obtener una crema."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega tomate y cebolla picados finamente."
+      },
+      {
+        "orden": 3,
+        "texto": "Sazona con limón, sal y cilantro. Mezcla y sirve."
+      }
+    ]
+  },
+  {
+    "id": "base-08",
+    "origen": "base",
+    "nombre": "Pasta al pomodoro",
+    "descripcion": "Pasta italiana sencilla con salsa de tomate fresco.",
+    "porciones": 2,
+    "cocina": "italiana",
+    "ingredientes": [
+      {
+        "nombre": "pasta",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "albahaca",
+        "cantidad": 5,
+        "unidad": "unidades"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Hierve la pasta al dente con sal."
+      },
+      {
+        "orden": 2,
+        "texto": "Sofríe el ajo en aceite, agrega tomate triturado."
+      },
+      {
+        "orden": 3,
+        "texto": "Mezcla pasta con salsa y sirve con albahaca."
+      }
+    ]
+  },
+  {
+    "id": "base-09",
+    "origen": "base",
+    "nombre": "Risotto de champiñones",
+    "descripcion": "Arroz cremoso italiano con champiñones.",
+    "porciones": 2,
+    "cocina": "italiana",
+    "ingredientes": [
+      {
+        "nombre": "arroz arbóreo",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "champiñones",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "queso parmesano",
+        "cantidad": 50,
+        "unidad": "g"
+      },
+      {
+        "nombre": "caldo de verduras",
+        "cantidad": 700,
+        "unidad": "ml"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla y ajo en mantequilla."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega champiñones y cocina 5 minutos."
+      },
+      {
+        "orden": 3,
+        "texto": "Añade el arroz y agrega caldo poco a poco."
+      },
+      {
+        "orden": 4,
+        "texto": "Termina con mantequilla y parmesano."
+      }
+    ]
+  },
+  {
+    "id": "base-10",
+    "origen": "base",
+    "nombre": "Huevos revueltos con vegetales",
+    "descripcion": "Desayuno rápido y nutritivo.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "huevo",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pimentón",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe la cebolla y el pimentón en aceite."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega el tomate y cocina 2 minutos."
+      },
+      {
+        "orden": 3,
+        "texto": "Vierte los huevos batidos y revuelve hasta cuajar."
+      }
+    ]
+  },
+  {
+    "id": "base-11",
+    "origen": "base",
+    "nombre": "Sopa de lentejas",
+    "descripcion": "Sopa reconfortante de lentejas con especias.",
+    "porciones": 4,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "lentejas",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "zanahoria",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "comino",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla, ajo y tomate con comino."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega lentejas y zanahoria con 1.5 L de agua."
+      },
+      {
+        "orden": 3,
+        "texto": "Cocina a fuego medio por 35-40 minutos hasta suavizar."
+      }
+    ]
+  },
+  {
+    "id": "base-12",
+    "origen": "base",
+    "nombre": "Arroz con leche",
+    "descripcion": "Postre clásico latinoamericano.",
+    "porciones": 6,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "arroz",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 1,
+        "unidad": "L"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 0.5,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "canela",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cocina el arroz con agua hasta medio cocer."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega la leche y el azúcar; revuelve constantemente."
+      },
+      {
+        "orden": 3,
+        "texto": "Cocina 20 min más hasta espesar. Sirve con canela."
+      }
+    ]
+  },
+  {
+    "id": "base-13",
+    "origen": "base",
+    "nombre": "Pollo a la plancha con ensalada",
+    "descripcion": "Pechuga de pollo sazonada con ensalada fresca.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "pechuga de pollo",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "lechuga",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pepino",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Marina la pechuga con sal, limón y aceite."
+      },
+      {
+        "orden": 2,
+        "texto": "Asa a la plancha 6 minutos por lado."
+      },
+      {
+        "orden": 3,
+        "texto": "Sirve con ensalada de lechuga, tomate y pepino."
+      }
+    ]
+  },
+  {
+    "id": "base-14",
+    "origen": "base",
+    "nombre": "Tostadas con aguacate y huevo",
+    "descripcion": "Desayuno moderno y nutritivo.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "pan",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aguacate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Tuesta el pan."
+      },
+      {
+        "orden": 2,
+        "texto": "Machaca el aguacate con sal y limón."
+      },
+      {
+        "orden": 3,
+        "texto": "Unta el aguacate y coloca el huevo estrellado encima."
+      }
+    ]
+  },
+  {
+    "id": "base-15",
+    "origen": "base",
+    "nombre": "Plátanos maduros fritos",
+    "descripcion": "Acompañamiento dulce típico colombiano.",
+    "porciones": 2,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "plátano maduro",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Corta el plátano en rodajas diagonales."
+      },
+      {
+        "orden": 2,
+        "texto": "Fríe en aceite caliente hasta dorar por ambos lados."
+      }
+    ]
+  },
+  {
+    "id": "base-16",
+    "origen": "base",
+    "nombre": "Changua",
+    "descripcion": "Sopa bogotana de leche con huevo para el desayuno.",
+    "porciones": 2,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "leche",
+        "cantidad": 500,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pan",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla larga",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Hierve la leche con agua (mitad y mitad) y cebolla."
+      },
+      {
+        "orden": 2,
+        "texto": "Rompe los huevos y deja escalfar 3 minutos."
+      },
+      {
+        "orden": 3,
+        "texto": "Sirve con pan y cilantro."
+      }
+    ]
+  },
+  {
+    "id": "base-17",
+    "origen": "base",
+    "nombre": "Ensalada de atún",
+    "descripcion": "Ensalada proteica fácil y rápida.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "atún",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "lechuga",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "mayonesa",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Escurre el atún y mezcla con mayonesa, cebolla y tomate."
+      },
+      {
+        "orden": 2,
+        "texto": "Sirve sobre hojas de lechuga."
+      }
+    ]
+  },
+  {
+    "id": "base-18",
+    "origen": "base",
+    "nombre": "Crema de espinacas",
+    "descripcion": "Sopa cremosa de espinacas.",
+    "porciones": 3,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "espinacas",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "crema de leche",
+        "cantidad": 100,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla y ajo en mantequilla."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega espinacas y 500 ml de agua; cocina 10 min."
+      },
+      {
+        "orden": 3,
+        "texto": "Licúa todo, añade crema y rectifica sal."
+      }
+    ]
+  },
+  {
+    "id": "base-19",
+    "origen": "base",
+    "nombre": "Tortilla española",
+    "descripcion": "Clásica tortilla de patatas española.",
+    "porciones": 4,
+    "cocina": "española",
+    "ingredientes": [
+      {
+        "nombre": "papa",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 100,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Fríe las papas en rodajas con cebolla en aceite abundante."
+      },
+      {
+        "orden": 2,
+        "texto": "Escurre y mezcla con huevos batidos y sal."
+      },
+      {
+        "orden": 3,
+        "texto": "Cuaja a fuego bajo en sartén, voltea y termina de cocinar."
+      }
+    ]
+  },
+  {
+    "id": "base-20",
+    "origen": "base",
+    "nombre": "Frijoles con garra",
+    "descripcion": "Frijoles paisas cocinados con tocino.",
+    "porciones": 6,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "frijoles",
+        "cantidad": 500,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tocino",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "hogao",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "comino",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Remoja los frijoles la noche anterior."
+      },
+      {
+        "orden": 2,
+        "texto": "Cocina en olla a presión con tocino y comino por 40 min."
+      },
+      {
+        "orden": 3,
+        "texto": "Agrega hogao, rectifica sal y cocina 10 min más."
+      }
+    ]
+  },
+  {
+    "id": "base-21",
+    "origen": "base",
+    "nombre": "Caldo de costilla",
+    "descripcion": "Sopa colombiana de desayuno con costilla de res.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "costilla de res",
+        "cantidad": 500,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla larga",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Hierve la costilla con ajo y cebolla por 45 minutos."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega la papa pelada y cocina 20 min más."
+      },
+      {
+        "orden": 3,
+        "texto": "Sirve con cilantro fresco."
+      }
+    ]
+  },
+  {
+    "id": "base-22",
+    "origen": "base",
+    "nombre": "Empanadas de pipián",
+    "descripcion": "Empanadas fritas rellenas de papa y maní.",
+    "porciones": 6,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "masa de maíz",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "maní",
+        "cantidad": 50,
+        "unidad": "g"
+      },
+      {
+        "nombre": "hogao",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 200,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Prepara el relleno con papa cocida, hogao y maní tostado."
+      },
+      {
+        "orden": 2,
+        "texto": "Forma discos con la masa, rellena y cierra bien."
+      },
+      {
+        "orden": 3,
+        "texto": "Fríe en aceite abundante hasta dorar."
+      }
+    ]
+  },
+  {
+    "id": "base-23",
+    "origen": "base",
+    "nombre": "Sopa de pasta",
+    "descripcion": "Sopa rápida y económica de pasta con vegetales.",
+    "porciones": 4,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "pasta",
+        "cantidad": 150,
+        "unidad": "g"
+      },
+      {
+        "nombre": "zanahoria",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla y ajo. Agrega zanahoria y papa en cubos."
+      },
+      {
+        "orden": 2,
+        "texto": "Cubre con agua y cocina 20 min."
+      },
+      {
+        "orden": 3,
+        "texto": "Agrega la pasta y cocina 10 min más."
+      }
+    ]
+  },
+  {
+    "id": "base-24",
+    "origen": "base",
+    "nombre": "Quesillo nariñense",
+    "descripcion": "Queso fresco estilo Nariño servido con melado.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "leche",
+        "cantidad": 1,
+        "unidad": "L"
+      },
+      {
+        "nombre": "cuajo",
+        "cantidad": 2,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Calienta la leche a 35°C, agrega cuajo y sal."
+      },
+      {
+        "orden": 2,
+        "texto": "Deja reposar 30 min hasta cuajar."
+      },
+      {
+        "orden": 3,
+        "texto": "Corta, escurre el suero y moldea."
+      }
+    ]
+  },
+  {
+    "id": "base-25",
+    "origen": "base",
+    "nombre": "Smoothie de banano",
+    "descripcion": "Batido energético de banano con leche.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "banano",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 400,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Licúa el banano con la leche y el azúcar."
+      },
+      {
+        "orden": 2,
+        "texto": "Sirve frío."
+      }
+    ]
+  },
+  {
+    "id": "base-26",
+    "origen": "base",
+    "nombre": "Ensalada César",
+    "descripcion": "Ensalada clásica con aderezo cremoso.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "lechuga",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pan",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "queso parmesano",
+        "cantidad": 30,
+        "unidad": "g"
+      },
+      {
+        "nombre": "mayonesa",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Corta el pan en cubos y tuesta en el horno."
+      },
+      {
+        "orden": 2,
+        "texto": "Mezcla mayonesa, limón y ajo para el aderezo."
+      },
+      {
+        "orden": 3,
+        "texto": "Mezcla la lechuga con aderezo, crutones y parmesano."
+      }
+    ]
+  },
+  {
+    "id": "base-27",
+    "origen": "base",
+    "nombre": "Pollo al curry",
+    "descripcion": "Pollo jugoso en salsa de curry con leche de coco.",
+    "porciones": 4,
+    "cocina": "asiática",
+    "ingredientes": [
+      {
+        "nombre": "pollo",
+        "cantidad": 600,
+        "unidad": "g"
+      },
+      {
+        "nombre": "leche de coco",
+        "cantidad": 400,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "curry en polvo",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla y ajo, agrega el curry y tuesta 1 min."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega el pollo y sella."
+      },
+      {
+        "orden": 3,
+        "texto": "Vierte la leche de coco y el tomate; cocina 25 min."
+      }
+    ]
+  },
+  {
+    "id": "base-28",
+    "origen": "base",
+    "nombre": "Torta de plátano",
+    "descripcion": "Budín dulce de plátano maduro.",
+    "porciones": 8,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "plátano maduro",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "harina",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 0.5,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Machaca el plátano maduro."
+      },
+      {
+        "orden": 2,
+        "texto": "Mezcla con huevo, mantequilla, azúcar, harina y sal."
+      },
+      {
+        "orden": 3,
+        "texto": "Hornea a 180°C por 35 minutos."
+      }
+    ]
+  },
+  {
+    "id": "base-29",
+    "origen": "base",
+    "nombre": "Crêpes de nutella y banano",
+    "descripcion": "Crêpes dulces para desayuno o postre.",
+    "porciones": 4,
+    "cocina": "francesa",
+    "ingredientes": [
+      {
+        "nombre": "harina",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 250,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "banano",
+        "cantidad": 2,
+        "unidad": "unidades"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Mezcla harina, leche, huevo y mantequilla hasta obtener masa lisa."
+      },
+      {
+        "orden": 2,
+        "texto": "Cocina crêpes finos en sartén antiadherente."
+      },
+      {
+        "orden": 3,
+        "texto": "Rellena con banano en rodajas y dobla."
+      }
+    ]
+  },
+  {
+    "id": "base-30",
+    "origen": "base",
+    "nombre": "Pasta carbonara",
+    "descripcion": "Pasta italiana cremosa con huevo y tocino.",
+    "porciones": 2,
+    "cocina": "italiana",
+    "ingredientes": [
+      {
+        "nombre": "pasta",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tocino",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "queso parmesano",
+        "cantidad": 50,
+        "unidad": "g"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cuece la pasta al dente."
+      },
+      {
+        "orden": 2,
+        "texto": "Fríe el tocino con ajo."
+      },
+      {
+        "orden": 3,
+        "texto": "Mezcla huevo y parmesano. Une todo fuera del fuego."
+      }
+    ]
+  },
+  {
+    "id": "base-31",
+    "origen": "base",
+    "nombre": "Sudado de pollo",
+    "descripcion": "Pollo en salsa de tomate al vapor con papa.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "pollo",
+        "cantidad": 600,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla, ajo y tomate. Agrega el pollo y sella."
+      },
+      {
+        "orden": 2,
+        "texto": "Añade papa y ½ taza de agua. Tapa y cocina a fuego bajo 30 min."
+      }
+    ]
+  },
+  {
+    "id": "base-32",
+    "origen": "base",
+    "nombre": "Hamburguesa casera",
+    "descripcion": "Hamburguesa jugosa con vegetales frescos.",
+    "porciones": 4,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "carne molida",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "pan para hamburguesa",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "lechuga",
+        "cantidad": 0.5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Forma hamburguesas de 100g, salpimienta."
+      },
+      {
+        "orden": 2,
+        "texto": "Asa en sartén caliente 3-4 min por lado."
+      },
+      {
+        "orden": 3,
+        "texto": "Arma con pan, lechuga, tomate y cebolla."
+      }
+    ]
+  },
+  {
+    "id": "base-33",
+    "origen": "base",
+    "nombre": "Avena con fruta",
+    "descripcion": "Desayuno saludable y energético.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "avena",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 400,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "banano",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "canela",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cocina la avena con la leche y el azúcar revolviendo."
+      },
+      {
+        "orden": 2,
+        "texto": "Sirve con banano en rodajas y canela."
+      }
+    ]
+  },
+  {
+    "id": "base-34",
+    "origen": "base",
+    "nombre": "Lasaña de carne",
+    "descripcion": "Lasaña clásica con carne y bechamel.",
+    "porciones": 6,
+    "cocina": "italiana",
+    "ingredientes": [
+      {
+        "nombre": "pasta para lasaña",
+        "cantidad": 250,
+        "unidad": "g"
+      },
+      {
+        "nombre": "carne molida",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 500,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "harina",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "queso parmesano",
+        "cantidad": 80,
+        "unidad": "g"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Prepara la salsa boloñesa con carne y tomate."
+      },
+      {
+        "orden": 2,
+        "texto": "Prepara bechamel con mantequilla, harina y leche."
+      },
+      {
+        "orden": 3,
+        "texto": "Alterna capas de pasta, boloñesa y bechamel. Cubre con parmesano."
+      },
+      {
+        "orden": 4,
+        "texto": "Hornea a 180°C por 35 minutos."
+      }
+    ]
+  },
+  {
+    "id": "base-35",
+    "origen": "base",
+    "nombre": "Ceviche de camarón",
+    "descripcion": "Ceviche fresco y cítrico con camarones.",
+    "porciones": 4,
+    "cocina": "peruana",
+    "ingredientes": [
+      {
+        "nombre": "camarón",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 6,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "tomate",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cilantro",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cuece brevemente los camarones en agua salada."
+      },
+      {
+        "orden": 2,
+        "texto": "Mezcla con jugo de limón, cebolla, tomate y cilantro."
+      },
+      {
+        "orden": 3,
+        "texto": "Refrigera 15 minutos antes de servir."
+      }
+    ]
+  },
+  {
+    "id": "base-36",
+    "origen": "base",
+    "nombre": "Arroz frito",
+    "descripcion": "Arroz frito estilo asiático con vegetales y huevo.",
+    "porciones": 3,
+    "cocina": "asiática",
+    "ingredientes": [
+      {
+        "nombre": "arroz",
+        "cantidad": 2,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "zanahoria",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "salsa soya",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Usa arroz cocido del día anterior."
+      },
+      {
+        "orden": 2,
+        "texto": "Sofríe cebolla y zanahoria en aceite muy caliente."
+      },
+      {
+        "orden": 3,
+        "texto": "Agrega el arroz, los huevos y la soya. Saltea todo."
+      }
+    ]
+  },
+  {
+    "id": "base-37",
+    "origen": "base",
+    "nombre": "Quesadillas de pollo",
+    "descripcion": "Quesadillas crujientes con pollo y queso.",
+    "porciones": 2,
+    "cocina": "mexicana",
+    "ingredientes": [
+      {
+        "nombre": "tortillas de harina",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pollo",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "queso",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cocina el pollo sazonado y desmecha."
+      },
+      {
+        "orden": 2,
+        "texto": "Arma quesadillas con pollo y queso entre dos tortillas."
+      },
+      {
+        "orden": 3,
+        "texto": "Cocina en sartén hasta dorar."
+      }
+    ]
+  },
+  {
+    "id": "base-38",
+    "origen": "base",
+    "nombre": "Pudín de pan",
+    "descripcion": "Postre económico con pan sobrante y leche.",
+    "porciones": 6,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "pan",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "leche",
+        "cantidad": 500,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 0.5,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "canela",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Remoja el pan en leche y mezcla con huevo, azúcar y canela."
+      },
+      {
+        "orden": 2,
+        "texto": "Vierte en molde engrasado con mantequilla."
+      },
+      {
+        "orden": 3,
+        "texto": "Hornea a 170°C por 40 minutos."
+      }
+    ]
+  },
+  {
+    "id": "base-39",
+    "origen": "base",
+    "nombre": "Sopa de tomate",
+    "descripcion": "Sopa cremosa de tomate asado.",
+    "porciones": 4,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "tomate",
+        "cantidad": 6,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "crema de leche",
+        "cantidad": 100,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Asa tomates, cebolla y ajo en el horno 20 min con aceite."
+      },
+      {
+        "orden": 2,
+        "texto": "Licúa todo con crema y sal."
+      },
+      {
+        "orden": 3,
+        "texto": "Calienta y sirve."
+      }
+    ]
+  },
+  {
+    "id": "base-40",
+    "origen": "base",
+    "nombre": "Carne asada con papa",
+    "descripcion": "Corte de res asado con papas al horno.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "carne de res",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Precalienta horno a 200°C. Corta papas y mezcla con aceite y sal."
+      },
+      {
+        "orden": 2,
+        "texto": "Hornea papas 35 min."
+      },
+      {
+        "orden": 3,
+        "texto": "Asa la carne a la plancha al punto deseado. Sirve juntos."
+      }
+    ]
+  },
+  {
+    "id": "base-41",
+    "origen": "base",
+    "nombre": "Mazamorra chiquita",
+    "descripcion": "Sopa de maíz blanco con papa y arveja.",
+    "porciones": 5,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "maíz blanco",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "papa",
+        "cantidad": 3,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "arveja",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "costilla de cerdo",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Cuece el maíz con la costilla y cebolla 1 hora."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega papa y arveja; cocina 20 min más."
+      }
+    ]
+  },
+  {
+    "id": "base-42",
+    "origen": "base",
+    "nombre": "Limonada de coco",
+    "descripcion": "Bebida refrescante colombiana.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "limón",
+        "cantidad": 6,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "leche de coco",
+        "cantidad": 200,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "hielo",
+        "cantidad": 1,
+        "unidad": "tazas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Licúa jugo de limón con leche de coco, azúcar y hielo."
+      },
+      {
+        "orden": 2,
+        "texto": "Sirve inmediatamente."
+      }
+    ]
+  },
+  {
+    "id": "base-43",
+    "origen": "base",
+    "nombre": "Buñuelos colombianos",
+    "descripcion": "Buñuelos tradicionales de queso.",
+    "porciones": 20,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "queso costeño",
+        "cantidad": 200,
+        "unidad": "g"
+      },
+      {
+        "nombre": "almidón de yuca",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 500,
+        "unidad": "ml"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Mezcla queso rallado, almidón, huevo, azúcar y sal."
+      },
+      {
+        "orden": 2,
+        "texto": "Forma bolitas y fríe en aceite a 170°C hasta dorar y flotar."
+      }
+    ]
+  },
+  {
+    "id": "base-44",
+    "origen": "base",
+    "nombre": "Arepa con queso",
+    "descripcion": "Arepa blanca rellena de queso.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "masa de maíz",
+        "cantidad": 400,
+        "unidad": "g"
+      },
+      {
+        "nombre": "queso",
+        "cantidad": 150,
+        "unidad": "g"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Amasa la masa de maíz con sal y agua tibia."
+      },
+      {
+        "orden": 2,
+        "texto": "Forma arepas y rellena con queso."
+      },
+      {
+        "orden": 3,
+        "texto": "Asa en budare o sartén con mantequilla."
+      }
+    ]
+  },
+  {
+    "id": "base-45",
+    "origen": "base",
+    "nombre": "Arroz con coco",
+    "descripcion": "Arroz de la costa colombiana con leche de coco.",
+    "porciones": 4,
+    "cocina": "colombiana",
+    "ingredientes": [
+      {
+        "nombre": "arroz",
+        "cantidad": 2,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "leche de coco",
+        "cantidad": 400,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "coco rallado",
+        "cantidad": 50,
+        "unidad": "g"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Tuesta el coco rallado en seco hasta dorar."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega leche de coco, azúcar y sal. Incorpora el arroz."
+      },
+      {
+        "orden": 3,
+        "texto": "Cocina tapado a fuego bajo por 20 minutos."
+      }
+    ]
+  },
+  {
+    "id": "base-46",
+    "origen": "base",
+    "nombre": "Gazpacho andaluz",
+    "descripcion": "Sopa fría española de tomate y vegetales.",
+    "porciones": 4,
+    "cocina": "española",
+    "ingredientes": [
+      {
+        "nombre": "tomate",
+        "cantidad": 5,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pepino",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pimentón",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "pan",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 3,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Remoja el pan y licúa todo con aceite, sal y un poco de agua."
+      },
+      {
+        "orden": 2,
+        "texto": "Cuela si prefieres textura fina. Refrigera y sirve frío."
+      }
+    ]
+  },
+  {
+    "id": "base-47",
+    "origen": "base",
+    "nombre": "Salmón al limón",
+    "descripcion": "Filete de salmón a la plancha con limón.",
+    "porciones": 2,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "salmón",
+        "cantidad": 300,
+        "unidad": "g"
+      },
+      {
+        "nombre": "limón",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite de oliva",
+        "cantidad": 1,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Marina el salmón con limón, ajo y sal 15 min."
+      },
+      {
+        "orden": 2,
+        "texto": "Asa en sartén con aceite 3-4 min por lado."
+      }
+    ]
+  },
+  {
+    "id": "base-48",
+    "origen": "base",
+    "nombre": "Chorizos a la cerveza",
+    "descripcion": "Chorizos jugosos cocidos en cerveza.",
+    "porciones": 4,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "chorizo",
+        "cantidad": 6,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "cerveza",
+        "cantidad": 355,
+        "unidad": "ml"
+      },
+      {
+        "nombre": "cebolla",
+        "cantidad": 1,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Sofríe cebolla y ajo, agrega los chorizos y sella."
+      },
+      {
+        "orden": 2,
+        "texto": "Vierte la cerveza y cocina a fuego medio 15 min."
+      }
+    ]
+  },
+  {
+    "id": "base-49",
+    "origen": "base",
+    "nombre": "Lomo de cerdo al horno",
+    "descripcion": "Lomo jugoso marinado con especias al horno.",
+    "porciones": 6,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "lomo de cerdo",
+        "cantidad": 1,
+        "unidad": "kg"
+      },
+      {
+        "nombre": "ajo",
+        "cantidad": 4,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "mostaza",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 1,
+        "unidad": "cucharaditas"
+      },
+      {
+        "nombre": "aceite",
+        "cantidad": 2,
+        "unidad": "cucharadas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Marina el lomo con ajo, mostaza, sal y aceite la noche anterior."
+      },
+      {
+        "orden": 2,
+        "texto": "Hornea a 180°C por 1 hora, bañando con sus jugos."
+      }
+    ]
+  },
+  {
+    "id": "base-50",
+    "origen": "base",
+    "nombre": "Brownie de chocolate",
+    "descripcion": "Brownie húmedo y fudgy de chocolate.",
+    "porciones": 9,
+    "cocina": "general",
+    "ingredientes": [
+      {
+        "nombre": "chocolate",
+        "cantidad": 150,
+        "unidad": "g"
+      },
+      {
+        "nombre": "mantequilla",
+        "cantidad": 100,
+        "unidad": "g"
+      },
+      {
+        "nombre": "azúcar",
+        "cantidad": 1,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "huevo",
+        "cantidad": 2,
+        "unidad": "unidades"
+      },
+      {
+        "nombre": "harina",
+        "cantidad": 0.5,
+        "unidad": "tazas"
+      },
+      {
+        "nombre": "sal",
+        "cantidad": 0.5,
+        "unidad": "cucharaditas"
+      }
+    ],
+    "pasos": [
+      {
+        "orden": 1,
+        "texto": "Derrite chocolate con mantequilla."
+      },
+      {
+        "orden": 2,
+        "texto": "Agrega azúcar, huevos, harina y sal. Mezcla."
+      },
+      {
+        "orden": 3,
+        "texto": "Hornea a 175°C por 25 minutos."
+      }
+    ]
+  }
+]

@@ -16,6 +16,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { radius, space } from '../constants/tokens'
+import { EstadoProvider } from '../lib/store'
 import { cargarTema, useTema } from '../lib/tema'
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
@@ -89,7 +90,7 @@ export default function RootLayout() {
   if (!listo) return <View style={{ flex: 1, backgroundColor: c.fondo }} />
 
   return (
-    <>
+    <EstadoProvider>
       <StatusBar style={esOscuro ? 'light' : 'dark'} />
       {/*
         Stack en la raíz y las pestañas dentro del grupo (tabs): así la barra inferior solo
@@ -105,6 +106,6 @@ export default function RootLayout() {
       >
         <Stack.Screen name="(tabs)" />
       </Stack>
-    </>
+    </EstadoProvider>
   )
 }
