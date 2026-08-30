@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { Text, View } from 'react-native'
 import { TarjetaProducto } from '../../components/dominio'
 import {
-  Boton,
   ICONO_CATEGORIA,
   NOMBRE_CATEGORIA,
   Pantalla,
@@ -13,7 +12,7 @@ import {
   Vacio,
 } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
-import { estadoDeCaducidad, PESO_RELOJ } from '../../lib/caducidad'
+import { estadoDeCaducidad } from '../../lib/caducidad'
 import { CATEGORIAS, type Categoria, type Producto } from '../../lib/dominio'
 import { useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
@@ -73,6 +72,66 @@ function BandaUrgente({
         {activo ? 'Ver todo' : 'Ver'}
       </Text>
     </Presionable>
+  )
+}
+
+/**
+ * Los cuatro caminos para cargar la despensa, VISIBLES.
+ *
+ * Esconderlos tras un botón flotante con un "+" sería enterrar lo que hace que esta app
+ * valga la pena en un teléfono. La fricción de cargar la despensa es el problema número uno
+ * del producto —nadie teclea cuarenta productos— y la solución no puede estar a dos toques.
+ *
+ * Van en el orden en que resuelven de verdad: la factura carga el mercado entero de una,
+ * el código sirve para lo que ya está guardado, el dictado para cuando las manos están
+ * ocupadas, y escribir a mano queda de último porque es lo más lento.
+ */
+function BarraDeEntrada() {
+  const { c, t, tq } = useTema()
+  const router = useRouter()
+
+  const caminos = [
+    { icono: 'receipt' as const, texto: 'Factura', ruta: '/capturar/factura' },
+    { icono: 'barcode-scan' as const, texto: 'Código', ruta: '/capturar/codigo' },
+    { icono: 'microphone-outline' as const, texto: 'Dictar', ruta: '/capturar/voz' },
+    { icono: 'pencil-outline' as const, texto: 'A mano', ruta: '/producto/editar' },
+  ]
+
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        gap: space[2],
+        paddingHorizontal: space[5],
+        marginBottom: space[5],
+      }}
+    >
+      {caminos.map((camino) => (
+        <Presionable
+          key={camino.texto}
+          onPress={() => router.push(camino.ruta as never)}
+          accessibilityRole="button"
+          accessibilityLabel={`Agregar por ${camino.texto.toLowerCase()}`}
+          style={{
+            flex: 1,
+            minHeight: tq.min + space[3],
+            borderRadius: radius.md,
+            backgroundColor: c.tarjeta,
+            borderColor: c.borde,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+            paddingVertical: space[2],
+          }}
+        >
+          <MaterialCommunityIcons name={camino.icono} size={22} color={c.primario} />
+          <Text style={[t.etiqueta, { color: c.texto2 }]} numberOfLines={1} allowFontScaling={false}>
+            {camino.texto}
+          </Text>
+        </Presionable>
+      ))}
+    </View>
   )
 }
 
@@ -156,13 +215,7 @@ export default function Despensa() {
         alTocar={() => setSoloUrgentes((v) => !v)}
       />
 
-      <View style={{ paddingHorizontal: space[5], marginBottom: space[5] }}>
-        <Boton
-          texto="Agregar producto"
-          icono="plus"
-          onPress={() => router.push('/producto/editar')}
-        />
-      </View>
+      <BarraDeEntrada />
 
       {total === 0 ? (
         <Vacio>

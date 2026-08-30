@@ -107,6 +107,9 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="producto/[id]" />
         <Stack.Screen name="producto/editar" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="capturar/factura" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="capturar/codigo" options={{ animation: 'fade' }} />
+        <Stack.Screen name="capturar/voz" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="receta/[id]" />
         <Stack.Screen name="receta/editar" options={{ animation: 'slide_from_bottom' }} />
         {/* El modo cocina entra desde abajo y sin gesto de vuelta: se sale por su propia

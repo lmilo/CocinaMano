@@ -14,7 +14,28 @@
       "expo-router",
       "expo-image",
       "expo-sharing",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Cocina a Mano usa la cámara para leer el código de barras del empaque y la factura del mercado.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Para elegir la foto de una factura que ya tomaste.",
+          "cameraPermission": "Para tomarle la foto a la factura del mercado."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Para que puedas dictar el mercado con las manos ocupadas.",
+          "speechRecognitionPermission": "Para convertir en productos lo que dictas."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

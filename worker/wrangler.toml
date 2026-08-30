@@ -1,0 +1,13 @@
+name = "cocina-a-mano"
+main = "src/index.ts"
+compatibility_date = "2026-08-30"
+
+# La clave de Gemini NO va aquí. Se sube aparte y queda cifrada:
+#   npx wrangler secret put GEMINI_API_KEY
+#
+# El tope de peticiones usa KV. Crear el namespace y pegar el id abajo:
+#   npx wrangler kv namespace create LIMITES
+#
+# [[kv_namespaces]]
+# binding = "LIMITES"
+# id = "<el id que imprime el comando>"
