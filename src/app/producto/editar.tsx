@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Text, View } from 'react-native'
 import { Boton, Campo, Pantalla, Selector } from '../../components/ui'
 import { NOMBRE_CATEGORIA } from '../../components/ui'
@@ -9,6 +9,7 @@ import { CATEGORIAS, type Categoria, type Unidad } from '../../lib/dominio'
 import { nuevoId, useAcciones, useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { abreviar, UNIDADES } from '../../lib/unidades'
+import { plazoMasCercano, sugerirParaProducto, textoDuracion } from '../../lib/vidautil'
 
 /**
  * Plazos en vez de calendario.
@@ -17,12 +18,14 @@ import { abreviar, UNIDADES } from '../../lib/unidades'
  * calendario para algo que se sabe "como en una semana" es fricción pura. El empaque que sí
  * trae fecha se escribe a mano abajo.
  */
-const PLAZOS = ['sin', '3', '7', '15', '30', 'otra'] as const
+const PLAZOS = ['sin', '2', '3', '5', '7', '15', '30', 'otra'] as const
 type Plazo = (typeof PLAZOS)[number]
 
 const NOMBRE_PLAZO: Record<Plazo, string> = {
   sin: 'No se vence',
+  '2': 'En 2 días',
   '3': 'En 3 días',
+  '5': 'En 5 días',
   '7': 'En 1 semana',
   '15': 'En 15 días',
   '30': 'En 1 mes',
@@ -67,6 +70,23 @@ export default function EditarProducto() {
   const [unidad, setUnidad] = useState<Unidad>(existente?.unidad ?? 'unidades')
   const [precio, setPrecio] = useState(existente?.precioUnitario ? String(existente.precioUnitario) : '')
   const [plazo, setPlazo] = useState<Plazo>(existente?.caducaISO ? 'otra' : 'sin')
+  /**
+   * Mientras el usuario no toque el plazo ni la categoría, la app los propone a partir del
+   * nombre. En cuanto los toca, deja de meterse: lo que él eligió manda.
+   */
+  const [tocoPlazo, setTocoPlazo] = useState(!!existente)
+  const [tocoCategoria, setTocoCategoria] = useState(!!existente)
+
+  const sugerido = useMemo(() => sugerirParaProducto(nombre), [nombre])
+
+  useEffect(() => {
+    if (!nombre.trim()) return
+    if (!tocoCategoria) setCategoria(sugerido.categoria)
+    if (!tocoPlazo) {
+      const p = plazoMasCercano(sugerido.dias)
+      setPlazo(p === null ? 'sin' : (String(p) as Plazo))
+    }
+  }, [nombre, sugerido, tocoCategoria, tocoPlazo])
   const [fechaEscrita, setFechaEscrita] = useState(() => {
     if (!existente?.caducaISO) return ''
     const [a, m, d] = existente.caducaISO.split('-')
@@ -129,7 +149,10 @@ export default function EditarProducto() {
           etiqueta="Dónde va"
           opciones={CATEGORIAS}
           valor={categoria}
-          alElegir={setCategoria}
+          alElegir={(v) => {
+            setTocoCategoria(true)
+            setCategoria(v)
+          }}
           nombre={(v) => NOMBRE_CATEGORIA[v]}
         />
 
@@ -164,7 +187,10 @@ export default function EditarProducto() {
             etiqueta="Cuándo se vence"
             opciones={PLAZOS}
             valor={plazo}
-            alElegir={setPlazo}
+            alElegir={(v) => {
+              setTocoPlazo(true)
+              setPlazo(v)
+            }}
             nombre={(p) => NOMBRE_PLAZO[p]}
           />
 
@@ -187,6 +213,9 @@ export default function EditarProducto() {
           {caducaISO && (
             <Text style={[t.apoyo, { color: c.texto3 }]}>
               {textoCaducidad(caducaISO, new Date())}
+              {!tocoPlazo && sugerido.dias !== null
+                ? ` · lo calculé yo, ${textoDuracion(sugerido.dias)}`
+                : ''}
             </Text>
           )}
         </View>

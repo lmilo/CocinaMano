@@ -1,5 +1,6 @@
 import { estadoDeCaducidad } from './caducidad'
 import type { Ingrediente, Producto, Receta } from './dominio'
+import { palabras, raices } from './texto'
 import { comparables, convertir } from './unidades'
 
 /**
@@ -48,37 +49,6 @@ export type RecetaEvaluada = {
    * viven en la misma app: "el ajiaco usa los tomates que se vencen mañana".
    */
   aprovecha: Producto[]
-}
-
-const VACIAS = new Set(['del', 'de', 'con', 'los', 'las', 'una', 'para', 'sin', 'sal_no'])
-
-/** Divide un nombre en palabras significativas. */
-function palabras(texto: string): string[] {
-  return normalizar(texto)
-    .split(/\s+/)
-    .filter((t) => t.length >= 3 && !VACIAS.has(t))
-}
-
-/**
- * Variantes de raíz para tolerar plurales del español sin confundirlos: vocal+s
- * ("tomates"→"tomate") y consonante+es ("frijoles"→"frijol").
- *
- * Se compara por palabra completa y no por subcadena, que es lo que evitaba el falso
- * positivo de "sal" dentro de "salchicha".
- */
-function raices(palabra: string): string[] {
-  const out = [palabra]
-  if (palabra.length > 3 && palabra.endsWith('s')) out.push(palabra.slice(0, -1))
-  if (palabra.length > 4 && palabra.endsWith('es')) out.push(palabra.slice(0, -2))
-  return out
-}
-
-function normalizar(texto: string): string {
-  return texto
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim()
 }
 
 /** Índice de raíz → productos que la contienen. */

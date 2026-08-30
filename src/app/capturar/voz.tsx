@@ -3,13 +3,21 @@ import * as Haptics from 'expo-haptics'
 import { useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import { Text, TextInput, View } from 'react-native'
-import { Boton, Chip, Pantalla, Presionable, Tarjeta } from '../../components/ui'
+import { Boton, Chip, Pantalla, Presionable, Selector, Tarjeta } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
 import { detener, escuchar, hayReconocedor, pedirPermiso } from '../../lib/reconocedor'
 import { nuevoId, useAcciones } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { formatearCantidad } from '../../lib/unidades'
 import { interpretarDictado, type ProductoDictado } from '../../lib/voz'
+import {
+  etiquetaPlazo,
+  fechaDesdePlazo,
+  PLAZOS,
+  plazoMasCercano,
+  sugerirParaProducto,
+  textoDuracion,
+} from '../../lib/vidautil'
 
 export default function Dictar() {
   const { c, t, tq } = useTema()
@@ -19,6 +27,11 @@ export default function Dictar() {
   const [escuchando, setEscuchando] = useState(false)
   const [texto, setTexto] = useState('')
   const [problema, setProblema] = useState<string | null>(null)
+  /**
+   * Plazo puesto a mano para todo lo dictado. `undefined` = cada producto usa lo que la
+   * tabla de duraciones calcula para él, que es lo correcto casi siempre.
+   */
+  const [plazoManual, setPlazoManual] = useState<number | null | undefined>(undefined)
   const cortar = useRef<(() => void) | null>(null)
 
   const disponible = hayReconocedor()
@@ -59,18 +72,23 @@ export default function Dictar() {
   }
 
   function guardar() {
-    const ahora = new Date().toISOString()
+    const ahora = new Date()
+    const creadoISO = ahora.toISOString()
     acciones.agregarProductos(
-      productos.map((p) => ({
-        id: nuevoId(),
-        nombre: p.nombre,
-        categoria: 'despensa' as const,
-        cantidad: p.cantidad,
-        unidad: p.unidad,
-        precioUnitario: 0,
-        caducaISO: null,
-        creadoISO: ahora,
-      })),
+      productos.map((p) => {
+        const sugerido = sugerirParaProducto(p.nombre)
+        const plazo = plazoManual !== undefined ? plazoManual : plazoMasCercano(sugerido.dias)
+        return {
+          id: nuevoId(),
+          nombre: p.nombre,
+          categoria: sugerido.categoria,
+          cantidad: p.cantidad,
+          unidad: p.unidad,
+          precioUnitario: 0,
+          caducaISO: fechaDesdePlazo(plazo, ahora),
+          creadoISO,
+        }
+      }),
     )
     router.back()
   }
@@ -155,8 +173,24 @@ export default function Dictar() {
               {productos.length === 1 ? 'ENTRA 1 PRODUCTO' : `ENTRAN ${productos.length} PRODUCTOS`}
             </Text>
             {productos.map((p, n) => (
-              <FilaDictada key={n} producto={p} />
+              <FilaDictada key={n} producto={p} plazoManual={plazoManual} />
             ))}
+
+            {/*
+              Igual que en la factura: la duración va propuesta, no en blanco. Sin fecha el
+              reloj de la comida no existe, y nadie entra a editarla producto por producto.
+            */}
+            <Selector
+              etiqueta="Cuánto duran"
+              opciones={['__auto__', ...PLAZOS.map((x) => String(x))]}
+              valor={plazoManual === undefined ? '__auto__' : String(plazoManual)}
+              alElegir={(v) =>
+                setPlazoManual(v === '__auto__' ? undefined : v === 'null' ? null : Number(v))
+              }
+              nombre={(v) =>
+                v === '__auto__' ? 'Lo que calcule' : etiquetaPlazo(v === 'null' ? null : Number(v))
+              }
+            />
           </View>
         )}
 
@@ -178,10 +212,21 @@ export default function Dictar() {
   )
 }
 
-function FilaDictada({ producto }: { producto: ProductoDictado }) {
+function FilaDictada({
+  producto,
+  plazoManual,
+}: {
+  producto: ProductoDictado
+  plazoManual: number | null | undefined
+}) {
   const { c, t } = useTema()
+  const sugerido = sugerirParaProducto(producto.nombre)
+  const duracion =
+    plazoManual !== undefined ? etiquetaPlazo(plazoManual).toLowerCase() : textoDuracion(sugerido.dias)
+
   return (
-    <Tarjeta style={{ flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[3] }}>
+    <Tarjeta style={{ gap: space[2], padding: space[3] }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
       <Text style={[t.cuerpo, { color: c.texto, flex: 1 }]}>{producto.nombre}</Text>
       {/*
         Cuando no se dijo la cantidad se asume 1 y SE DICE que se asumió, en vez de dejar un
@@ -194,6 +239,8 @@ function FilaDictada({ producto }: { producto: ProductoDictado }) {
           {formatearCantidad(producto.cantidad, producto.unidad)}
         </Text>
       )}
+      </View>
+      <Text style={[t.apoyo, { color: c.texto3 }]}>{duracion}</Text>
     </Tarjeta>
   )
 }

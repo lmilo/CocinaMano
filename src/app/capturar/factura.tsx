@@ -5,13 +5,34 @@ import { useState } from 'react'
 import { ActivityIndicator, Text, TextInput, View } from 'react-native'
 import { Boton, Chip, Pantalla, Presionable, Selector, Tarjeta, Vacio } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
-import type { Unidad } from '../../lib/dominio'
+import type { Categoria, Unidad } from '../../lib/dominio'
 import { ErrorIA, IA_CONFIGURADA, leerFactura, type ProductoLeido } from '../../lib/ia'
 import { nuevoId, useAcciones } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { abreviar, UNIDADES } from '../../lib/unidades'
+import {
+  etiquetaPlazo,
+  fechaDesdePlazo,
+  PLAZOS,
+  plazoMasCercano,
+  sugerirParaProducto,
+} from '../../lib/vidautil'
 
 type Fase = 'inicio' | 'leyendo' | 'revision'
+
+/**
+ * Una línea de la revisión: lo que leyó la IA más lo que la app propone.
+ *
+ * El plazo y la categoría NO vienen del modelo: salen de la tabla de duraciones típicas de
+ * `vidautil.ts`, en local. Sin esto todo entraba sin fecha y a la categoría "despensa", y
+ * el reloj de la comida —que es la tesis del producto— quedaba muerto salvo que el usuario
+ * editara los ocho productos uno por uno.
+ */
+type EnRevision = ProductoLeido & {
+  categoria: Categoria
+  /** Días hasta que se vence. `null` = no se vence. */
+  plazo: number | null
+}
 
 /**
  * La foto se comprime ANTES de mandarla.
@@ -29,7 +50,7 @@ export default function CapturarFactura() {
   const acciones = useAcciones()
 
   const [fase, setFase] = useState<Fase>('inicio')
-  const [leidos, setLeidos] = useState<ProductoLeido[]>([])
+  const [leidos, setLeidos] = useState<EnRevision[]>([])
   const [problema, setProblema] = useState<string | null>(null)
 
   async function procesar(imagen: ImagePicker.ImagePickerAsset) {
@@ -42,7 +63,12 @@ export default function CapturarFactura() {
 
     try {
       const productos = await leerFactura(imagen.base64, imagen.mimeType ?? 'image/jpeg')
-      setLeidos(productos)
+      setLeidos(
+        productos.map((p) => {
+          const sugerido = sugerirParaProducto(p.nombre)
+          return { ...p, categoria: sugerido.categoria, plazo: plazoMasCercano(sugerido.dias) }
+        }),
+      )
       setFase('revision')
     } catch (err) {
       setProblema(err instanceof ErrorIA ? err.message : 'Algo salió mal. Intenta de nuevo.')
@@ -70,21 +96,27 @@ export default function CapturarFactura() {
   }
 
   function guardarTodo() {
-    const ahora = new Date().toISOString()
+    const ahora = new Date()
+    const creadoISO = ahora.toISOString()
     acciones.agregarProductos(
       leidos.map((p) => ({
         id: nuevoId(),
         nombre: p.nombre,
-        categoria: 'despensa' as const,
+        categoria: p.categoria,
         cantidad: p.cantidad,
         unidad: p.unidad,
         // El recibo trae el precio TOTAL de la línea; la despensa guarda el unitario.
         precioUnitario: p.cantidad > 0 ? Math.round(p.precio / p.cantidad) : p.precio,
-        caducaISO: null,
-        creadoISO: ahora,
+        caducaISO: fechaDesdePlazo(p.plazo, ahora),
+        creadoISO,
       })),
     )
     router.back()
+  }
+
+  /** Pone el mismo plazo en todo. Para el mercado que se guarda entero de una vez. */
+  function aplicarPlazoATodos(plazo: number | null) {
+    setLeidos((prev) => prev.map((p) => ({ ...p, plazo })))
   }
 
   if (!IA_CONFIGURADA) {
@@ -141,11 +173,31 @@ export default function CapturarFactura() {
           </>
         ) : (
           <>
-            <View style={{ paddingHorizontal: space[5], marginBottom: space[4] }}>
+            <View style={{ paddingHorizontal: space[5], marginBottom: space[4], gap: space[4] }}>
               <Text style={[t.apoyo, { color: c.texto3 }]}>
                 Un recibo trae abreviaturas raras. Corrige lo que haga falta antes de que
                 entre a la despensa — si entra mal, las recetas te van a mentir.
               </Text>
+
+              {/*
+                La duración va PROPUESTA por producto, no en blanco: sin fecha el reloj de la
+                comida no existe y nadie edita ocho productos a mano. Se dice que es un
+                cálculo de la app —no la fecha del empaque— porque la app no sabe cómo se
+                guardó nada, y los términos de uso dicen exactamente eso.
+              */}
+              <Tarjeta style={{ gap: space[3] }}>
+                <Text style={[t.cuerpoMed, { color: c.texto }]}>Cuánto le calculo a cada uno</Text>
+                <Text style={[t.apoyo, { color: c.texto3 }]}>
+                  Son duraciones típicas, no la fecha del empaque. Cámbialas abajo si sabes
+                  otra cosa, o ponles la misma a todas de un toque:
+                </Text>
+                <Selector
+                  opciones={PLAZOS.map((p) => String(p))}
+                  valor="__ninguno__"
+                  alElegir={(v) => aplicarPlazoATodos(v === 'null' ? null : Number(v))}
+                  nombre={(v) => etiquetaPlazo(v === 'null' ? null : Number(v))}
+                />
+              </Tarjeta>
             </View>
 
             {leidos.map((p, n) => (
@@ -206,8 +258,8 @@ function FilaRevision({
   alCambiar,
   alQuitar,
 }: {
-  producto: ProductoLeido
-  alCambiar: (cambios: Partial<ProductoLeido>) => void
+  producto: EnRevision
+  alCambiar: (cambios: Partial<EnRevision>) => void
   alQuitar: () => void
 }) {
   const { c, t, tq } = useTema()
@@ -284,6 +336,16 @@ function FilaRevision({
               nombre={(u) => abreviar(u, producto.cantidad || 2)}
             />
           </View>
+        </View>
+
+        <View style={{ gap: space[2] }}>
+          <Text style={[t.rotulo, { color: c.texto3 }]}>CUÁNTO DURA</Text>
+          <Selector
+            opciones={PLAZOS.map((x) => String(x))}
+            valor={String(producto.plazo)}
+            alElegir={(v) => alCambiar({ plazo: v === 'null' ? null : Number(v) })}
+            nombre={(v) => etiquetaPlazo(v === 'null' ? null : Number(v))}
+          />
         </View>
 
         {producto.precio > 0 && (
