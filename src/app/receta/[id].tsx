@@ -7,6 +7,7 @@ import { Boton, Pantalla, Presionable, Seccion, Tarjeta, Vacio } from '../../com
 import { radius, space } from '../../constants/tokens'
 import { RECETAS_BASE } from '../../lib/catalogo'
 import { costeEstimado, escalar, evaluarReceta, construirIndice } from '../../lib/coincidencia'
+import { compartirRecetaPDF } from '../../lib/exportar'
 import { nuevoId, useAcciones, useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { formatearCantidad } from '../../lib/unidades'
@@ -174,7 +175,7 @@ export default function DetalleReceta() {
         {faltantes.length > 0 && (
           <View style={{ paddingHorizontal: space[5], marginTop: space[4] }}>
             <Boton
-              texto={faltantes.length === 1 ? 'Mandar lo que falta a la lista' : 'Mandar lo que falta a la lista'}
+              texto={faltantes.length === 1 ? 'Mandar lo que falta a la lista' : `Mandar los ${faltantes.length} a la lista`}
               icono="cart-plus"
               variante="contorno"
               onPress={mandarFaltantesALaLista}
@@ -228,6 +229,13 @@ export default function DetalleReceta() {
               }
             />
           </Tarjeta>
+
+          <Boton
+            texto="Compartir la receta"
+            icono="share-variant-outline"
+            variante="contorno"
+            onPress={() => void compartirRecetaPDF(evaluada, porciones)}
+          />
 
           {receta.origen !== 'base' && (
             <View style={{ flexDirection: 'row', gap: space[3] }}>

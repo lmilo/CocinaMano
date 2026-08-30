@@ -32,6 +32,8 @@ type Contexto = {
   /** Aplica una transformación de `acciones.ts` y persiste el resultado. */
   aplicar: (fn: (estado: Estado) => Estado) => void
   borrarTodo: () => Promise<void>
+  /** Reemplaza el estado entero. Solo para restaurar un respaldo. */
+  restaurar: (estado: Estado) => void
 }
 
 const Ctx = createContext<Contexto | null>(null)
@@ -79,7 +81,15 @@ export function EstadoProvider({ children }: { children: ReactNode }) {
     await AsyncStorage.removeItem(CLAVE).catch(() => {})
   }, [])
 
-  return <Ctx.Provider value={{ estado, cargando, aplicar, borrarTodo }}>{children}</Ctx.Provider>
+  const restaurar = useCallback((nuevo: Estado) => {
+    setEstado(nuevo)
+  }, [])
+
+  return (
+    <Ctx.Provider value={{ estado, cargando, aplicar, borrarTodo, restaurar }}>
+      {children}
+    </Ctx.Provider>
+  )
 }
 
 export function useEstado() {

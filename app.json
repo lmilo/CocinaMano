@@ -35,6 +35,12 @@
           "microphonePermission": "Para que puedas dictar el mercado con las manos ocupadas.",
           "speechRecognitionPermission": "Para convertir en productos lo que dictas."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#245239"
+        }
       ]
     ],
     "experiments": {
