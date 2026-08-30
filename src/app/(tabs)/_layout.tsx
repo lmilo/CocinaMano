@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
+import { BottomTabBar } from 'expo-router/tabs'
 import { Text, View } from 'react-native'
+import { BannerAnuncio } from '../../components/BannerAnuncio'
 import { radius, space } from '../../constants/tokens'
 import { useTema } from '../../lib/tema'
 
@@ -53,6 +55,14 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      // El banner va DENTRO de la barra, encima de las pestañas: así respeta el área
+      // segura del gesto de Android sin cálculos a mano, y no tapa contenido.
+      tabBar={(props) => (
+        <View>
+          <BannerAnuncio />
+          <BottomTabBar {...props} />
+        </View>
+      )}
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,

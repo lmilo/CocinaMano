@@ -10,14 +10,15 @@ import {
   PublicSans_700Bold,
 } from '@expo-google-fonts/public-sans'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
+import { Stack, usePathname, useRouter } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { SincronizarAvisos } from '../components/avisos'
+import { VERSION_LEGAL } from '../constants/legal'
 import { radius, space } from '../constants/tokens'
-import { EstadoProvider } from '../lib/store'
+import { EstadoProvider, useEstado } from '../lib/store'
 import { cargarTema, useTema } from '../lib/tema'
 
 SplashScreen.preventAutoHideAsync().catch(() => {})
@@ -63,6 +64,49 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => voi
   )
 }
 
+/**
+ * Decide a dónde entra el usuario.
+ *
+ * Quien ya tenía la app instalada nunca vuelve a pasar por la bienvenida, así que la
+ * aceptación no puede vivir solo allí: al actualizar a una versión cuyo texto legal cambió,
+ * esta es la única puerta por la que pasa. Se compara la VERSIÓN y no un booleano porque el
+ * usuario aceptó un texto concreto, no la idea de aceptar.
+ *
+ * No hay clave de acceso, a diferencia de Recargo: allá protege el sueldo, que es
+ * información sensible de verdad. Lo que hay en una despensa no lo es, y una fricción sin
+ * motivo se paga en abandono.
+ */
+function Guardia({ children }: { children: ReactNode }) {
+  const { c } = useTema()
+  const router = useRouter()
+  const ruta = usePathname()
+  const { estado, cargando } = useEstado()
+
+  const faltaAceptar = estado.configurado && estado.legal?.version !== VERSION_LEGAL
+
+  useEffect(() => {
+    if (cargando) return
+
+    // /legal se deja pasar sin configurar: desde la bienvenida se puede abrir a leer el
+    // detalle, y devolver al usuario allí sería expulsarlo de lo que está por aceptar.
+    if (!estado.configurado) {
+      if (ruta !== '/bienvenida' && ruta !== '/legal') router.replace('/bienvenida')
+      return
+    }
+    if (faltaAceptar && ruta !== '/legal') router.replace('/legal?modo=aceptar')
+  }, [cargando, estado.configurado, faltaAceptar, ruta, router])
+
+  // El contenido protegido NO se pinta mientras haya una redirección pendiente: si no, se
+  // alcanza a ver la despensa unos frames antes de que aparezca la bienvenida.
+  const redirigiendo =
+    (!estado.configurado && ruta !== '/bienvenida' && ruta !== '/legal') ||
+    (faltaAceptar && ruta !== '/legal')
+
+  if (cargando || redirigiendo) return <View style={{ flex: 1, backgroundColor: c.fondo }} />
+
+  return <>{children}</>
+}
+
 export default function RootLayout() {
   const { c, esOscuro } = useTema()
   const [temaListo, setTemaListo] = useState(false)
@@ -99,6 +143,7 @@ export default function RootLayout() {
         existe en las cuatro pantallas principales, y no en la bienvenida, la captura por
         cámara ni el modo cocina.
       */}
+      <Guardia>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -107,6 +152,8 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="bienvenida" options={{ animation: 'fade', gestureEnabled: false }} />
+        <Stack.Screen name="legal" options={{ animation: 'fade' }} />
         <Stack.Screen name="producto/[id]" />
         <Stack.Screen name="producto/editar" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="capturar/factura" options={{ animation: 'slide_from_bottom' }} />
@@ -121,6 +168,7 @@ export default function RootLayout() {
           options={{ animation: 'slide_from_bottom', gestureEnabled: false }}
         />
       </Stack>
+      </Guardia>
     </EstadoProvider>
   )
 }

@@ -8,10 +8,28 @@
     "userInterfaceStyle": "automatic",
     "android": {
       "package": "com.crincon.cocinamano",
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#245239",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      }
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 140,
+          "backgroundColor": "#FAF6ED",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#14110D"
+          }
+        }
+      ],
       "expo-image",
       "expo-sharing",
       "expo-secure-store",
@@ -39,7 +57,14 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/images/notificacion-icon.png",
           "color": "#245239"
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
         }
       ]
     ],
@@ -47,6 +72,7 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "owner": "lmilo"
+    "owner": "lmilo",
+    "icon": "./assets/images/icon.png"
   }
 }
