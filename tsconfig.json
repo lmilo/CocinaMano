@@ -8,7 +8,7 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  // `_web` es el frontend Vue en retirada: se conserva versionado hasta que la app Android
-  // cubra todo lo que hacía (fase 9 del plan), pero no debe entrar al typecheck.
-  "exclude": ["node_modules", "_web", "worker"]
+  // `worker` tiene su propio tsconfig: apunta a los tipos de Cloudflare, no a los de React
+  // Native, y mezclarlos rompe los dos.
+  "exclude": ["node_modules", "worker"]
 }

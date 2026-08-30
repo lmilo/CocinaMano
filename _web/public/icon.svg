@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="108" fill="#b5502d"/>
-  <!-- clara del huevo (forma orgánica), dentro de la zona segura -->
-  <path fill="#f3ebde" d="M256 132c54 0 78 30 104 54s58 40 58 86-34 78-86 90-74-6-118-6-92 28-128-14-26-92 6-128 22-58 60-94c24-22 50-38 104-38z"/>
-  <!-- yema -->
-  <circle cx="238" cy="250" r="58" fill="#e0a72e"/>
-  <circle cx="222" cy="234" r="16" fill="#f0c25c"/>
-</svg>

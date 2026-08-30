@@ -78,7 +78,8 @@ cd worker
 npm install
 npx wrangler login
 
-# La clave de Gemini, cifrada. La que ya tenías está en _web/supabase/functions/.env
+# La clave de Gemini, cifrada. La que venía del proyecto Supabase quedó en worker/.dev.vars
+# (ignorada por git, y es también donde `wrangler dev` la lee en local).
 npx wrangler secret put GEMINI_API_KEY
 
 # El tope de peticiones (opcional pero recomendado)
@@ -182,7 +183,6 @@ src/
 datos/recetas-base.json  # el catálogo, dentro del bundle
 worker/                  # el Worker de Cloudflare
 _branding/               # BRAND · TOKENS · LAYOUT · MOODBOARD
-_web/                    # la versión Vue, en retirada
 ```
 
 ## Lo que falta
@@ -194,7 +194,6 @@ _web/                    # la versión Vue, en retirada
 - Desplegar el Worker y poner `EXPO_PUBLIC_WORKER_URL`.
 - Crear la app en AdMob y poner los IDs reales.
 - Publicar la política de datos en una URL, que es requisito de Play Store.
-- Retirar `_web/`, cuando ya no haga falta consultarla.
 
 ## De dónde viene
 
@@ -205,6 +204,10 @@ ese es un lugar de teléfono, no de navegador.
 De la versión web sobrevivieron la lógica de matching, las unidades, el catálogo y el modelo
 de dominio. Las vistas, los stores de Pinia y el esquema de Postgres no: Vue no cruza a React
 Native, y sin cuentas no hace falta una base de datos.
+
+Esa versión ya no está en la rama, pero **no se perdió**: vive completa en `main` y en el
+historial de `movil`. Para consultarla, `git show main:_web/views/RecipesView.vue` o
+`git checkout main -- _web`.
 
 El estándar técnico está tomado de [Recargo](../recargo), que es la otra app Android de este
 portafolio: mismo stack, misma disciplina de decisiones escritas, y las mismas trampas ya
