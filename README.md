@@ -44,9 +44,14 @@ npm install
 npx expo start
 ```
 
-> **Expo Go no alcanza.** Cámara, dictado, avisos y anuncios son módulos nativos que no
-> existen ahí. La app **no se cae** —todos cargan protegidos y la pantalla lo explica— pero
-> esas cuatro cosas no funcionan hasta armar un APK. Lo demás sí se puede probar en Expo Go.
+> **En Expo Go funciona casi todo**, incluida la cámara (`expo-camera` y
+> `expo-image-picker` son del SDK), así que el escáner de códigos y la lectura de facturas
+> con IA se pueden probar ahí.
+>
+> Lo que **no** existe en Expo Go es el **dictado por voz** (`expo-speech-recognition` no es
+> paquete oficial de Expo), los **avisos** (`expo-notifications` perdió soporte en Android
+> desde el SDK 53) y los **anuncios**. Los tres cargan protegidos, así que la app no se cae:
+> simplemente esas entradas no están, y la pantalla de ajustes lo explica. En el APK sí.
 
 ```bash
 npm test            # 90 pruebas de la lógica pura
