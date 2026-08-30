@@ -160,6 +160,24 @@ aquí el problema no es cuánto costó el tomate, es que se está dañando.
 **Cero emojis.** La versión web usaba veinte como iconos. Un emoji es tipografía del sistema:
 cambia de forma entre fabricantes, no se tiñe con los tokens y no se anima.
 
+## Los documentos legales
+
+`TERMINOS.md` y `PRIVACIDAD.md` de este repositorio son la **fuente de verdad**, y están
+publicados en el portafolio porque Google Play exige una URL pública y estable:
+
+| | |
+|---|---|
+| Tratamiento de datos | `https://camilorc.netlify.app/legal/cocina-a-mano/privacidad` |
+| Términos de uso | `https://camilorc.netlify.app/legal/cocina-a-mano/terminos` |
+
+Esa primera es la que va en la ficha de Play Console. Si se rompe, la ficha queda
+apuntando a un 404 y eso es motivo de suspensión.
+
+**Al cambiar los `.md` de aquí hay que traer el cambio allá**, a
+`app/utils/legalCocina.ts` en el repositorio del portafolio, y subir `VERSION_LEGAL` en
+`src/constants/legal.ts` para que la app vuelva a pedir la aceptación. La fecha de vigencia
+es lo que permite detectar que se desincronizaron.
+
 ## Anuncios
 
 Los IDs de prueba son el valor por defecto **a propósito**. Tocar tus propios anuncios reales
@@ -200,7 +218,7 @@ _branding/               # BRAND · TOKENS · LAYOUT · MOODBOARD
   de revisión lo mitigan, pero **es el punto donde esto se gana o se pierde**.
 - Desplegar el Worker y poner `EXPO_PUBLIC_WORKER_URL`.
 - Crear la app en AdMob y poner los IDs reales.
-- Publicar la política de datos en una URL, que es requisito de Play Store.
+- Tomar capturas del APK para la ficha del portafolio y para Play Store.
 
 ## De dónde viene
 
