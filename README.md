@@ -93,8 +93,10 @@ Después, la URL que devuelve va en el `.env` de la raíz:
 
 ```bash
 cp .env.example .env
-# EXPO_PUBLIC_WORKER_URL=https://cocina-a-mano.<tu-subdominio>.workers.dev
+# EXPO_PUBLIC_WORKER_URL=https://cocina-a-mano.camiloarinconc.workers.dev
 ```
+
+**Ya está desplegado** en esa URL, con la clave como secret y el KV `LIMITES` enlazado.
 
 **Sin esa variable la app funciona completa**, solo que la lectura de facturas y la
 generación con IA avisan que no están disponibles. Todo lo demás es local.
@@ -102,7 +104,7 @@ generación con IA avisan que no están disponibles. Todo lo demás es local.
 Para probarlo sin teléfono:
 
 ```bash
-curl -X POST https://<tu-worker>.workers.dev/receta \
+curl -X POST https://cocina-a-mano.camiloarinconc.workers.dev/receta \
   -H 'content-type: application/json' \
   -d '{"ingredientes":[{"nombre":"arroz","unidad":"tazas"},{"nombre":"pollo","unidad":"g"}],"porciones":2}'
 ```

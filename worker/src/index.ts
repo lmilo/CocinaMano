@@ -257,10 +257,16 @@ async function leerFactura(peticion: PeticionFactura, env: Env): Promise<Respons
   }
 
   /*
-    El prompt pide DOS cosas que la pantalla de revisión necesita y que un extractor
-    ingenuo no da: que expanda las abreviaturas del recibo a algo que una persona reconozca,
-    y que marque como dudoso lo que no tenga claro. Sin lo segundo, la revisión obliga a
-    releer la lista entera y nadie lo hace.
+    El prompt pide TRES cosas que la pantalla de revisión necesita y que un extractor
+    ingenuo no da: que expanda las abreviaturas a algo que una persona reconozca, que
+    resuelva bien el tamaño del envase, y que marque como dudoso lo que no tenga claro. Sin
+    lo último, la revisión obliga a releer la lista entera y nadie lo hace.
+
+    LO DEL ENVASE NO ES PARANOIA, es un fallo observado. Con "PECHUGA POLLO BAND X500G" y un
+    1 en la columna de cantidad, el modelo devolvía `1 g`: tomaba la unidad del envase y la
+    cantidad de la columna. Un gramo de pollo en la despensa hace que el match diga "no te
+    alcanza" cuando alcanza de sobra, que es el mismo error que se corrigió en
+    `coincidencia.ts` pero entrando por la otra punta.
   */
   const prompt = `Esta es la foto de una factura de supermercado colombiana. Extrae los productos de comida.
 
@@ -268,10 +274,16 @@ Reglas:
 - EXPANDE las abreviaturas del recibo a un nombre que una persona reconozca. Ejemplos: "LCH DSLC 1LT" es "Leche deslactosada", "PECHUGA POLLO BAND" es "Pechuga de pollo", "AZUC MORENA" es "Azúcar morena".
 - Usa el nombre genérico del alimento, sin la marca. "Leche deslactosada", no "Leche Alquería deslactosada".
 - IGNORA todo lo que no sea comida ni bebida: bolsas, aseo, propina, impuestos, totales, descuentos.
-- Si la cantidad no aparece, pon 1 y la unidad "unidades".
-- Si el peso viene en gramos o kilos, respétalo. En Colombia se compra mucho por libras: si el recibo dice "LB", la unidad es "lb".
+- ATENCIÓN CON EL TAMAÑO DEL ENVASE, que suele venir DENTRO del nombre (X500G, 1000ML, 1LT, 1KG, X6). El número de la columna de cantidad es CUÁNTOS ENVASES se llevaron, no el contenido. Devuelve el CONTENIDO TOTAL: multiplica el tamaño del envase por el número de envases.
+  · "PECHUGA POLLO BAND X500G" con cantidad 1  →  cantidad 500, unidad "g"   (NUNCA cantidad 1 con unidad "g")
+  · "ACEITE GIRASOL 1000ML" con cantidad 1     →  cantidad 1000, unidad "ml"
+  · "LCH DSLC ENT 1LT" con cantidad 2          →  cantidad 2, unidad "L"
+  · "ARROZ DIANA LB" con cantidad 2            →  cantidad 2, unidad "lb"
+- Si el producto se vendió por peso a granel, el número de la columna ya es el peso: "TOMATE CHONTO GRANEL KG 0.850" es cantidad 0.85, unidad "kg".
+- Si no se distingue ninguna cantidad, pon 1 y la unidad "unidades".
+- En Colombia se compra mucho por libras: si el recibo dice "LB", la unidad es "lb".
 - "precio" es el precio TOTAL de esa línea en pesos, sin puntos ni símbolos. Si no se distingue, pon 0.
-- Marca "dudoso": true cuando no puedas leer bien la línea o no estés seguro de qué producto es.
+- Marca "dudoso": true cuando no puedas leer bien la línea, no estés seguro de qué producto es, o hayas tenido que adivinar el tamaño del envase.
 
 Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni bloques de código:
 {

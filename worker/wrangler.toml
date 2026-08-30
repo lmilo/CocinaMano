@@ -2,12 +2,13 @@ name = "cocina-a-mano"
 main = "src/index.ts"
 compatibility_date = "2026-08-30"
 
-# La clave de Gemini NO va aquí. Se sube aparte y queda cifrada:
+# La clave de Gemini NO va aquí: vive cifrada como secret del Worker.
 #   npx wrangler secret put GEMINI_API_KEY
 #
-# El tope de peticiones usa KV. Crear el namespace y pegar el id abajo:
-#   npx wrangler kv namespace create LIMITES
-#
-# [[kv_namespaces]]
-# binding = "LIMITES"
-# id = "<el id que imprime el comando>"
+# En local, `wrangler dev` la lee de .dev.vars, que está ignorado por git.
+
+# El tope de peticiones por instalación. Ver `dentroDelLimite` en src/index.ts: falla
+# abierto a propósito, porque es un tope de gasto y no un control de seguridad.
+[[kv_namespaces]]
+binding = "LIMITES"
+id = "c858acc53fd74711a32ae5ce9de67c8b"
