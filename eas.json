@@ -11,12 +11,16 @@
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" }
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_WORKER_URL": "https://cocina-a-mano.camiloarinconc.workers.dev"
+      }
     },
     "production": {
       "autoIncrement": true,
       "android": { "buildType": "app-bundle" },
       "env": {
+        "EXPO_PUBLIC_WORKER_URL": "https://cocina-a-mano.camiloarinconc.workers.dev",
         "EXPO_PUBLIC_ADS_REALES": "1"
       }
     }
