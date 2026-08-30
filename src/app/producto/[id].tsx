@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useMemo } from 'react'
-import { Alert, Text, View } from 'react-native'
+import { useMemo, useState } from 'react'
+import { Text, View } from 'react-native'
+import { Confirmar } from '../../components/Confirmar'
 import { ChipReloj } from '../../components/dominio'
 import {
   Boton,
@@ -27,6 +28,7 @@ export default function DetalleProducto() {
   const { estado } = useEstado()
   const acciones = useAcciones()
 
+  const [confirmando, setConfirmando] = useState(false)
   const ahora = useMemo(() => new Date(), [])
   const producto = estado.productos.find((p) => p.id === id)
 
@@ -49,19 +51,6 @@ export default function DetalleProducto() {
     )
   }
 
-  function confirmarBorrado() {
-    Alert.alert('Quitar de la despensa', `Se quita ${producto!.nombre}.`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Quitar',
-        style: 'destructive',
-        onPress: () => {
-          acciones.borrarProducto(producto!.id)
-          router.back()
-        },
-      },
-    ])
-  }
 
   return (
     <Pantalla titulo={producto.nombre}>
@@ -118,7 +107,7 @@ export default function DetalleProducto() {
             />
           </View>
           <View style={{ flex: 1 }}>
-            <Boton texto="Quitar" icono="delete-outline" variante="texto" onPress={confirmarBorrado} />
+            <Boton texto="Quitar" icono="delete-outline" variante="texto" onPress={() => setConfirmando(true)} />
           </View>
         </View>
       </View>
@@ -149,6 +138,18 @@ export default function DetalleProducto() {
           })
         )}
       </Seccion>
+      <Confirmar
+        visible={confirmando}
+        titulo="Quitar de la despensa"
+        cuerpo={`Se quita ${producto.nombre} de tu despensa. Las recetas dejarán de contarlo.`}
+        textoConfirmar="Quitarlo"
+        onConfirmar={() => {
+          setConfirmando(false)
+          acciones.borrarProducto(producto.id)
+          router.back()
+        }}
+        onCancelar={() => setConfirmando(false)}
+      />
     </Pantalla>
   )
 }

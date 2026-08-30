@@ -1,6 +1,7 @@
 import * as Crypto from 'expo-crypto'
 import * as SecureStore from 'expo-secure-store'
-import type { Receta, Unidad } from './dominio'
+import type { Categoria, Receta, Unidad } from './dominio'
+import { CATEGORIAS } from './dominio'
 import { normalizarUnidad } from './unidades'
 
 /**
@@ -145,5 +146,47 @@ export async function leerFactura(imagenBase64: string, tipoMime: string): Promi
     unidad: normalizarUnidad(p.unidad),
     precio: Number.isFinite(Number(p.precio)) ? Math.max(0, Math.round(Number(p.precio))) : 0,
     dudoso: p.dudoso === true,
+  }))
+}
+
+/** Un producto entendido de lo que alguien dictó. */
+export type ProductoEntendido = {
+  nombre: string
+  cantidad: number
+  unidad: Unidad
+  /** `null` cuando la persona no dijo dónde va. Lo decide `vidautil.ts`. */
+  categoria: Categoria | null
+  /** 'AAAA-MM-DD' si la persona dijo cuándo se vence; `null` si no dijo nada. */
+  vence: string | null
+  /** No se dijo cantidad y se asumió 1. */
+  asumido: boolean
+}
+
+/**
+ * Entiende lo que alguien dictó en voz alta.
+ *
+ * ESTO LO HACÍA UNA TABLA EN EL TELÉFONO Y SE QUEDÓ CORTA. Con "2 bolsas de leche van para
+ * la nevera vencen el 4 de mayo" el parseo local dejaba «leche van vencen el 4 de mayo»
+ * como nombre, y al no entender la fecha caía a la duración típica de la leche y mostraba
+ * una fecha calculada como si hubiera entendido la dictada — que es lo peor que puede pasar
+ * aquí: parecer que entendió.
+ *
+ * Refinar la tabla era un pozo sin fondo: cada frase nueva pide una regla nueva. La tabla
+ * sigue en `voz.ts` y se usa SIN SEÑAL, que es lo que de verdad la justificaba.
+ *
+ * `hoy` viaja desde el teléfono porque el Worker no sabe en qué huso está el usuario, y
+ * "el 4 de mayo" dicho hoy puede ser del año que viene.
+ */
+export async function entenderDictado(texto: string, hoy: string): Promise<ProductoEntendido[]> {
+  const datos = await pedir<{ productos: any[] }>('/dictado', { texto, hoy })
+
+  return datos.productos.map((p) => ({
+    nombre: String(p.nombre ?? '').trim(),
+    cantidad: Number(p.cantidad) > 0 ? Number(p.cantidad) : 1,
+    // Se normaliza igual: el modelo se sale del enum aunque se le pida que no.
+    unidad: normalizarUnidad(p.unidad),
+    categoria: CATEGORIAS.includes(p.categoria) ? (p.categoria as Categoria) : null,
+    vence: /^\d{4}-\d{2}-\d{2}$/.test(p.vence ?? '') ? p.vence : null,
+    asumido: p.asumido === true,
   }))
 }

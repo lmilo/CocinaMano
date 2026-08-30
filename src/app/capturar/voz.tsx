@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
-import { Text, TextInput, View } from 'react-native'
+import { ActivityIndicator, Text, TextInput, View } from 'react-native'
 import { Boton, Chip, Pantalla, Presionable, Selector, Tarjeta } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
 import { detener, escuchar, hayReconocedor, pedirPermiso } from '../../lib/reconocedor'
@@ -10,7 +10,10 @@ import { nuevoId, useAcciones } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { NOMBRE_CATEGORIA } from '../../components/ui'
 import { formatearCantidad } from '../../lib/unidades'
-import { interpretarDictado, type ProductoDictado } from '../../lib/voz'
+import { interpretarDictado } from '../../lib/voz'
+import { comoISO, textoCaducidad } from '../../lib/caducidad'
+import type { Categoria } from '../../lib/dominio'
+import { entenderDictado, ErrorIA, IA_CONFIGURADA, type ProductoEntendido } from '../../lib/ia'
 import {
   etiquetaPlazo,
   fechaDesdePlazo,
@@ -47,7 +50,58 @@ export default function Dictar() {
   const cortar = useRef<(() => void) | null>(null)
 
   const disponible = hayReconocedor()
-  const productos = interpretarDictado(texto)
+  const [productos, setProductos] = useState<ProductoEntendido[]>([])
+  const [entendiendo, setEntendiendo] = useState(false)
+  const [conRespaldo, setConRespaldo] = useState(false)
+
+  /**
+   * Convierte lo dictado en productos.
+   *
+   * LO HACE LA IA, Y NO LA TABLA DEL TELÉFONO. La tabla se quedó corta en cuanto alguien
+   * habló normal: con "2 bolsas de leche van para la nevera vencen el 4 de mayo" dejaba
+   * «leche van vencen el 4 de mayo» como nombre y, al no entender la fecha, mostraba la
+   * duración típica de la leche como si hubiera entendido la dictada. Parecer que entendió
+   * es peor que admitir que no.
+   *
+   * Sin señal cae al parseo local, que para eso sigue existiendo. Se avisa cuando pasa: lo
+   * que entienda ahí va a ser más tosco y el usuario tiene que saber por qué.
+   */
+  async function entender(loDicho: string) {
+    const limpio = loDicho.trim()
+    if (!limpio) {
+      setProductos([])
+      setConRespaldo(false)
+      return
+    }
+
+    if (IA_CONFIGURADA) {
+      setEntendiendo(true)
+      try {
+        setProductos(await entenderDictado(limpio, comoISO(new Date())))
+        setConRespaldo(false)
+        return
+      } catch (err) {
+        // Sin red no se anuncia como fallo: se resuelve con lo que hay y se dice.
+        if (!(err instanceof ErrorIA) || err.codigo !== 'sin_red') {
+          setProblema(err instanceof ErrorIA ? err.message : 'No se entendió. Puedes corregirlo abajo.')
+        }
+      } finally {
+        setEntendiendo(false)
+      }
+    }
+
+    setProductos(
+      interpretarDictado(limpio).map((p) => ({
+        nombre: p.nombre,
+        cantidad: p.cantidad,
+        unidad: p.unidad,
+        categoria: p.categoria ?? null,
+        vence: null,
+        asumido: p.asumido,
+      })),
+    )
+    setConRespaldo(true)
+  }
 
   useEffect(() => () => cortar.current?.(), [])
 
@@ -57,10 +111,12 @@ export default function Dictar() {
     cortar.current = null
     // Lo que quedó a medio consolidar también cuenta: cortar justo ahí perdería la última
     // palabra, que suele ser el producto que la persona acaba de sacar de la bolsa.
-    setTexto((previo) => juntar(previo, parcial))
+    const completo = juntar(texto, parcial)
+    setTexto(completo)
     setParcial('')
     setEscuchando(false)
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {})
+    void entender(completo)
   }
 
   async function empezarEscucha() {
@@ -103,14 +159,12 @@ export default function Dictar() {
     acciones.agregarProductos(
       productos.map((p) => {
         const sugerido = sugerirParaProducto(p.nombre)
-        // Lo que el usuario DIJO manda sobre lo que la tabla calcula, y el control en lote
-        // manda sobre los dos: es el más explícito de los tres.
-        const plazo =
+        // Tres fuentes, de más explícita a menos: el control en lote, lo que el usuario
+        // DIJO, y por último lo que la tabla de duraciones calcula a partir del nombre.
+        const caducaISO =
           plazoManual !== undefined
-            ? plazoManual
-            : p.dias !== undefined
-              ? p.dias
-              : plazoMasCercano(sugerido.dias)
+            ? fechaDesdePlazo(plazoManual, ahora)
+            : (p.vence ?? fechaDesdePlazo(plazoMasCercano(sugerido.dias), ahora))
         return {
           id: nuevoId(),
           nombre: p.nombre,
@@ -118,7 +172,7 @@ export default function Dictar() {
           cantidad: p.cantidad,
           unidad: p.unidad,
           precioUnitario: 0,
-          caducaISO: fechaDesdePlazo(plazo, ahora),
+          caducaISO,
           creadoISO,
         }
       }),
@@ -219,10 +273,38 @@ export default function Dictar() {
             ]}
           />
           <Text style={[t.apoyo, { color: c.texto3, marginTop: space[2] }]}>
-            Puedes corregirlo aquí antes de guardar. Entiendo la cantidad, dónde va
-            («para la nevera») y cuándo se vence («que dura una semana»).
+            Puedes corregirlo aquí. Entiendo la cantidad, dónde va y cuándo se vence:
+            «dos bolsas de leche van para la nevera, vencen el 4 de mayo».
           </Text>
+
+          {!escuchando && !!texto.trim() && (
+            <View style={{ marginTop: space[3] }}>
+              <Boton
+                texto={entendiendo ? 'Entendiendo…' : 'Volver a entenderlo'}
+                icono="refresh"
+                variante="contorno"
+                onPress={() => void entender(texto)}
+                deshabilitado={entendiendo}
+              />
+            </View>
+          )}
         </View>
+
+        {conRespaldo && productos.length > 0 && (
+          <Tarjeta style={{ borderColor: c.estaSemana }}>
+            <Text style={[t.apoyo, { color: c.texto2 }]}>
+              Sin conexión lo entendí con lo que tengo en el teléfono, así que puede quedar
+              más tosco. Revisa los nombres antes de guardar.
+            </Text>
+          </Tarjeta>
+        )}
+
+        {entendiendo && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[3] }}>
+            <ActivityIndicator color={c.primario} />
+            <Text style={[t.cuerpo, { color: c.texto2 }]}>Entendiendo lo que dijiste…</Text>
+          </View>
+        )}
 
         {productos.length > 0 && (
           <View style={{ gap: space[2] }}>
@@ -230,7 +312,7 @@ export default function Dictar() {
               {productos.length === 1 ? 'ENTRA 1 PRODUCTO' : `ENTRAN ${productos.length} PRODUCTOS`}
             </Text>
             {productos.map((p, n) => (
-              <FilaDictada key={n} producto={p} plazoManual={plazoManual} />
+              <FilaDictada key={n} producto={p} plazoManual={plazoManual} ahora={new Date()} />
             ))}
 
             {/*
@@ -272,22 +354,24 @@ export default function Dictar() {
 function FilaDictada({
   producto,
   plazoManual,
+  ahora,
 }: {
-  producto: ProductoDictado
+  producto: ProductoEntendido
   plazoManual: number | null | undefined
+  ahora: Date
 }) {
   const { c, t } = useTema()
   const sugerido = sugerirParaProducto(producto.nombre)
-  // Lo que el usuario DIJO se muestra distinto de lo que la app calculó: si dictó "vence
-  // en tres días", eso es un dato suyo y no una estimación, y merece decirse sin el "como".
-  const loDijo = producto.dias !== undefined
+  // Lo que el usuario DIJO se muestra distinto de lo que la app calculó: si dictó "vencen
+  // el 4 de mayo", eso es un dato suyo y no una estimación, y merece decirse sin el "como".
+  const loDijo = producto.vence !== null
   const duracion =
     plazoManual !== undefined
       ? etiquetaPlazo(plazoManual).toLowerCase()
       : loDijo
-        ? `se vence en ${producto.dias} ${producto.dias === 1 ? 'día' : 'días'}`
+        ? textoCaducidad(producto.vence!, ahora)
         : textoDuracion(sugerido.dias)
-  const categoria = producto.categoria ?? sugerido.categoria
+  const categoria: Categoria = producto.categoria ?? sugerido.categoria
 
   return (
     <Tarjeta style={{ gap: space[2], padding: space[3] }}>

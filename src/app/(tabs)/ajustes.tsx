@@ -1,10 +1,12 @@
 import Constants from 'expo-constants'
 import { useState } from 'react'
-import { Alert, Switch, Text, View } from 'react-native'
+import { Switch, Text, View } from 'react-native'
+import { Confirmar } from '../../components/Confirmar'
 import { Boton, Pantalla, Seccion, Selector, Tarjeta } from '../../components/ui'
 import { space } from '../../constants/tokens'
 import { avisoDePrueba, hayAvisos, pedirPermisoAvisos } from '../../lib/avisos'
 import { ErrorRespaldo, exportarRespaldo, leerRespaldo } from '../../lib/exportar'
+import type { Estado } from '../../lib/acciones'
 import { useAcciones, useEstado } from '../../lib/store'
 import { cambiarTema, useTema, type PreferenciaTema } from '../../lib/tema'
 
@@ -21,15 +23,19 @@ export default function Ajustes() {
   const { estado, borrarTodo, restaurar } = useEstado()
   const acciones = useAcciones()
   const [probando, setProbando] = useState(false)
+  const [confirmandoBorrado, setConfirmandoBorrado] = useState(false)
+  const [aviso, setAviso] = useState<{ titulo: string; cuerpo: string } | null>(null)
+  /** El respaldo leído, esperando confirmación: reemplaza TODO lo que hay ahora. */
+  const [porRestaurar, setPorRestaurar] = useState<Estado | null>(null)
 
   const avisosDisponibles = hayAvisos()
 
   async function alternarAvisos(activar: boolean) {
     if (activar && !(await pedirPermisoAvisos())) {
-      Alert.alert(
-        'Falta el permiso',
-        'Android tiene que dejar que la app te avise. Actívalo en los ajustes del teléfono.',
-      )
+      setAviso({
+        titulo: 'Falta el permiso',
+        cuerpo: 'Android tiene que dejar que la app te avise. Puedes activarlo en los ajustes del teléfono, en la sección de notificaciones.',
+      })
       return
     }
     acciones.guardarAjustes({ avisarCaducidad: activar })
@@ -40,7 +46,10 @@ export default function Ajustes() {
     const ok = await avisoDePrueba()
     setProbando(false)
     if (!ok) {
-      Alert.alert('No se pudo', 'Revisa que los avisos estén permitidos en los ajustes del teléfono.')
+      setAviso({
+        titulo: 'No se pudo mandar el aviso',
+        cuerpo: 'Revisa que los avisos estén permitidos en los ajustes del teléfono.',
+      })
     }
   }
 
@@ -48,7 +57,7 @@ export default function Ajustes() {
     try {
       await exportarRespaldo(estado)
     } catch {
-      Alert.alert('No se pudo', 'Intenta de nuevo.')
+      setAviso({ titulo: 'No se pudo guardar', cuerpo: 'Intenta de nuevo.' })
     }
   }
 
@@ -57,29 +66,15 @@ export default function Ajustes() {
       const recuperado = await leerRespaldo()
       if (!recuperado) return
 
-      Alert.alert(
-        'Restaurar el respaldo',
-        `Se reemplaza lo que tienes ahora por el respaldo: ${recuperado.productos.length} en la despensa y ${recuperado.recetas.length} recetas tuyas.`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Restaurar', onPress: () => restaurar(recuperado) },
-        ],
-      )
+      setPorRestaurar(recuperado)
     } catch (err) {
-      Alert.alert('No se pudo', err instanceof ErrorRespaldo ? err.message : 'Intenta de nuevo.')
+      setAviso({
+        titulo: 'No se pudo restaurar',
+        cuerpo: err instanceof ErrorRespaldo ? err.message : 'Intenta de nuevo.',
+      })
     }
   }
 
-  function confirmarBorrado() {
-    Alert.alert(
-      'Borrar todo y empezar de cero',
-      'Se borran la despensa, tus recetas y la lista de compras. No se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Borrar todo', style: 'destructive', onPress: () => void borrarTodo() },
-      ],
-    )
-  }
 
   return (
     <Pantalla titulo="Yo" apoyo="Ajustes de la app">
@@ -184,7 +179,12 @@ export default function Ajustes() {
 
       <Seccion titulo="Empezar de cero">
         <View style={{ paddingHorizontal: space[5] }}>
-          <Boton texto="Borrar todo" icono="delete-outline" variante="contorno" onPress={confirmarBorrado} />
+          <Boton
+            texto="Borrar todo"
+            icono="delete-outline"
+            variante="contorno"
+            onPress={() => setConfirmandoBorrado(true)}
+          />
         </View>
       </Seccion>
 
@@ -193,6 +193,47 @@ export default function Ajustes() {
           Cocina a Mano {Constants.expoConfig?.version ?? ''}
         </Text>
       </View>
+
+      <Confirmar
+        visible={confirmandoBorrado}
+        titulo="Borrar todo y empezar de cero"
+        cuerpo={`Se borran ${estado.productos.length} productos de la despensa, ${estado.recetas.length} recetas tuyas y ${estado.compras.length} cosas de la lista. Como nada se sube a ningún lado, esto no se puede deshacer — a menos que tengas un respaldo guardado.`}
+        textoConfirmar="Borrar todo"
+        onConfirmar={() => {
+          setConfirmandoBorrado(false)
+          void borrarTodo()
+        }}
+        onCancelar={() => setConfirmandoBorrado(false)}
+      />
+
+      {/* Restaurar TAMBIÉN destruye: pisa lo que hay ahora. Va con el mismo marco. */}
+      <Confirmar
+        visible={porRestaurar !== null}
+        icono="backup-restore"
+        titulo="Restaurar el respaldo"
+        cuerpo={
+          porRestaurar
+            ? `El respaldo trae ${porRestaurar.productos.length} productos y ${porRestaurar.recetas.length} recetas tuyas, y reemplaza lo que tienes ahora: ${estado.productos.length} productos y ${estado.recetas.length} recetas.`
+            : ''
+        }
+        textoConfirmar="Reemplazar lo de ahora"
+        onConfirmar={() => {
+          if (porRestaurar) restaurar(porRestaurar)
+          setPorRestaurar(null)
+        }}
+        onCancelar={() => setPorRestaurar(null)}
+      />
+
+      <Confirmar
+        soloAviso
+        visible={aviso !== null}
+        icono="information-outline"
+        titulo={aviso?.titulo ?? ''}
+        cuerpo={aviso?.cuerpo ?? ''}
+        textoConfirmar=""
+        onConfirmar={() => setAviso(null)}
+        onCancelar={() => setAviso(null)}
+      />
     </Pantalla>
   )
 }

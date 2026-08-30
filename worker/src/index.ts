@@ -10,9 +10,10 @@
  * app instalada que deja de funcionar al tercer mes es peor que una que nunca lo tuvo. Un
  * Worker no duerme.
  *
- * Dos rutas:
+ * Tres rutas:
  *   POST /receta   — inventa una receta con lo que hay en la despensa
  *   POST /factura  — lee la foto de un recibo y saca los productos
+ *   POST /dictado  — entiende lo que alguien dictó en voz alta
  */
 
 export interface Env {
@@ -326,6 +327,94 @@ Si la foto no es una factura o no se lee nada, devuelve {"productos": []}.`
   }
 }
 
+// ─── /dictado ───────────────────────────────────────────────────────────────
+
+type PeticionDictado = {
+  texto?: string
+  /** 'AAAA-MM-DD' del día del usuario. El Worker no sabe en qué huso está. */
+  hoy?: string
+}
+
+/**
+ * Entiende lo que alguien dictó.
+ *
+ * ESTO EMPEZÓ SIENDO UNA TABLA EN EL TELÉFONO, y la tabla se quedó corta en cuanto alguien
+ * habló normal. Con "2 bolsas de leche van para la nevera vencen el 4 de mayo" el parseo
+ * local dejaba «leche van vencen el 4 de mayo» como nombre del producto, y —lo peor— al no
+ * entender la fecha caía a la duración típica de la leche y mostraba una fecha calculada
+ * como si hubiera entendido la dictada.
+ *
+ * Refinar la tabla era un pozo sin fondo: cada frase nueva pide una regla nueva y el
+ * lenguaje natural no se acaba. La tabla sigue viva en `voz.ts` como respaldo SIN SEÑAL,
+ * que es lo que de verdad justificaba tenerla.
+ *
+ * La fecha se resuelve aquí y no en el teléfono porque hace falta el contexto de la frase
+ * entera: "el 4 de mayo" dicho el 30 de agosto es del año que viene, no de este.
+ */
+async function entenderDictado(peticion: PeticionDictado, env: Env): Promise<Response> {
+  const texto = (peticion?.texto ?? '').trim()
+  if (!texto) {
+    return new Response(JSON.stringify({ productos: [] }), { status: 200, headers: JSON_HEADERS })
+  }
+  if (texto.length > 2000) {
+    return error(400, 'json_invalido', 'El dictado es demasiado largo.')
+  }
+
+  const hoy = /^\d{4}-\d{2}-\d{2}$/.test(peticion?.hoy ?? '')
+    ? peticion.hoy!
+    : new Date().toISOString().slice(0, 10)
+
+  const prompt = `Alguien está guardando el mercado y dictó esto en voz alta, en español de Colombia:
+
+"${texto}"
+
+Saca los productos. Habla como habla la gente, con muletillas y frases sueltas: "dos bolsas de leche van para la nevera vencen el 4 de mayo" son DOS bolsas de leche, van a la nevera, y se vencen el 4 de mayo.
+
+Reglas:
+- "nombre" es SOLO el alimento, sin verbos, sin muletillas y sin nada de lo que se dijo sobre dónde va o cuándo se vence. De la frase del ejemplo, el nombre es "Leche" — nunca "leche van vencen el 4 de mayo".
+- Escribe el nombre en singular y con mayúscula inicial: "Leche", "Pechuga de pollo", "Tomate".
+- "cantidad" y "unidad": la unidad debe ser EXACTAMENTE una de ${UNIDADES}. Ninguna otra palabra vale como unidad.
+  · Los envases que no son medida ("bolsas", "paquetes", "cajas", "latas") van como "unidades", y la cantidad es cuántos envases.
+  · Las agrupaciones SE CONVIERTEN a la cantidad que representan: "una docena de huevos" es cantidad 12 y unidad "unidades"; "media docena" es 6; "un par" es 2. NUNCA devuelvas "docenas" como unidad.
+  · Si no se dijo cantidad, pon 1 y marca "asumido": true.
+- "categoria" debe ser EXACTAMENTE una de: nevera, congelador, despensa, especias, panaderia, bebidas, otro. Si la persona dijo dónde va, respétalo. Si no lo dijo, déjala en null y NO adivines.
+- "vence" es la fecha en formato AAAA-MM-DD, o null si la persona no dijo nada al respecto.
+  · Hoy es ${hoy}. Una fecha de vencimiento SIEMPRE está en el futuro: si dice "el 4 de mayo" y ese día ya pasó este año, es del año siguiente.
+  · "en tres días", "la otra semana", "en un mes" se convierten a fecha contando desde hoy.
+  · Si NO dijo nada de vencimiento, pon null. NO calcules cuánto suele durar el alimento: de eso se encarga la app.
+- Si dictó varios productos seguidos, devuélvelos todos, en el orden en que los dijo.
+
+Responde ÚNICAMENTE con un objeto JSON válido, sin markdown ni bloques de código:
+{
+  "productos": [
+    { "nombre": "Leche", "cantidad": 2, "unidad": "unidades", "categoria": "nevera", "vence": "2027-05-04", "asumido": false }
+  ]
+}
+
+Si no se reconoce ningún alimento, devuelve {"productos": []}.`
+
+  // Temperatura baja: esto es transcribir estructura, no proponer nada.
+  const salida = await pedirAGemini(env, [{ text: prompt }], 0.1)
+  if (!salida.ok) return salida.respuesta
+
+  try {
+    const datos = JSON.parse(salida.texto)
+    if (!Array.isArray(datos?.productos)) throw new Error('Falta el arreglo de productos')
+
+    const productos = datos.productos.filter(
+      (p: any) => p && typeof p.nombre === 'string' && p.nombre.trim().length > 0,
+    )
+    return new Response(JSON.stringify({ productos }), { status: 200, headers: JSON_HEADERS })
+  } catch (err) {
+    return error(
+      502,
+      'respuesta_inesperada',
+      'No se entendió lo dictado. Puedes corregirlo a mano.',
+      err instanceof Error ? err.message : String(err),
+    )
+  }
+}
+
 // ─── entrada ────────────────────────────────────────────────────────────────
 
 export default {
@@ -354,6 +443,7 @@ export default {
     const ruta = new URL(req.url).pathname
     if (ruta === '/receta') return generarReceta(cuerpo as PeticionReceta, env)
     if (ruta === '/factura') return leerFactura(cuerpo as PeticionFactura, env)
+    if (ruta === '/dictado') return entenderDictado(cuerpo as PeticionDictado, env)
 
     return error(404, 'ruta_desconocida', 'Esa ruta no existe.')
   },

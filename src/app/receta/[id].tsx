@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useMemo, useState } from 'react'
-import { Alert, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
+import { Confirmar } from '../../components/Confirmar'
 import { InsigniaCoincidencia } from '../../components/dominio'
 import { Boton, Pantalla, Presionable, Seccion, Tarjeta, Vacio } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
@@ -49,6 +50,7 @@ export default function DetalleReceta() {
   )
 
   const [porciones, setPorciones] = useState(receta?.porciones ?? 2)
+  const [confirmando, setConfirmando] = useState(false)
 
   const evaluada = useMemo(() => {
     if (!receta) return null
@@ -84,19 +86,6 @@ export default function DetalleReceta() {
     router.push('/compras')
   }
 
-  function confirmarBorrado() {
-    Alert.alert('Borrar receta', `Se borra ${receta!.nombre}.`, [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Borrar',
-        style: 'destructive',
-        onPress: () => {
-          acciones.borrarReceta(receta!.id)
-          router.back()
-        },
-      },
-    ])
-  }
 
   return (
     <Pantalla titulo={receta.nombre} apoyo={receta.descripcion || undefined}>
@@ -248,12 +237,25 @@ export default function DetalleReceta() {
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <Boton texto="Borrar" icono="delete-outline" variante="texto" onPress={confirmarBorrado} />
+                <Boton texto="Borrar" icono="delete-outline" variante="texto" onPress={() => setConfirmando(true)} />
               </View>
             </View>
           )}
         </View>
       </Seccion>
+
+      <Confirmar
+        visible={confirmando}
+        titulo="Borrar la receta"
+        cuerpo={`Se borra ${receta.nombre} y la calificación que le pusiste. Esto no se puede deshacer.`}
+        textoConfirmar="Borrarla"
+        onConfirmar={() => {
+          setConfirmando(false)
+          acciones.borrarReceta(receta.id)
+          router.back()
+        }}
+        onCancelar={() => setConfirmando(false)}
+      />
     </Pantalla>
   )
 }
