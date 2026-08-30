@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Cocina a Mano",
+    "slug": "cocina-a-mano",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cocinamano",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.crincon.cocinamano",
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-image",
+      "expo-sharing",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "owner": "lmilo"
+  }
+}

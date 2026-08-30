@@ -1,7 +1,14 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/assets/*": ["./assets/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  // `_web` es el frontend Vue en retirada: se conserva versionado hasta que la app Android
+  // cubra todo lo que hacía (fase 9 del plan), pero no debe entrar al typecheck.
+  "exclude": ["node_modules", "_web", "worker"]
 }
