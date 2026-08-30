@@ -72,6 +72,27 @@ export const light = {
   sobreOscuro: '#FFFFFF',
   sobreClaro: '#1A1712',
   foco: '#245239',
+
+  /*
+    ── El marco de la categoría ──────────────────────────────────────────
+    Dónde se guarda cada cosa, para leerlo de un vistazo con la nevera abierta.
+
+    ES REFUERZO DEL ICONO, NO UN CANAL APARTE. Cada categoría ya tiene su icono y su
+    palabra; el marco solo acelera la lectura de quien ve color. Hizo falta comprobarlo:
+    la fórmula WCAG mide LUMINANCIA, no tono, así que "madera" y "piedra" salen a 1.01:1
+    entre sí aunque a la vista sean marrón y gris. Con el icono delante eso no importa;
+    como canal único habría sido inservible.
+
+    `otro` no lleva color a propósito: es la categoría sin identidad, y darle acento sería
+    lo mismo que pintar de color lo que tiene tiempo de sobra en el reloj.
+  */
+  catNevera: '#2C5F8A', // 5.74:1 en el peor fondo
+  catCongelador: '#1E7F92', // 3.96:1
+  catDespensa: '#7A5C3A', // 5.22:1
+  catEspecias: '#A8571C', // 4.41:1
+  catPanaderia: '#8A6A1F', // 4.29:1
+  catBebidas: '#5B4B9E', // 6.06:1
+  catOtro: 'transparent',
 } as const
 
 /** Los valores son `string` y no literales: si no, el tema oscuro exigiría los mismos hex. */
@@ -123,6 +144,14 @@ export const dark: Paleta = {
   sobreOscuro: '#FFFFFF',
   sobreClaro: '#14110D',
   foco: '#7FC391',
+
+  catNevera: '#7FB3D9', // 6.84:1
+  catCongelador: '#5FC4D4', // 7.56:1
+  catDespensa: '#C4A47A', // 6.54:1
+  catEspecias: '#E8A05C', // 7.03:1
+  catPanaderia: '#D4B85F', // 7.91:1
+  catBebidas: '#A79BE0', // 6.15:1
+  catOtro: 'transparent',
 }
 
 export const space = { 0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 7: 28, 8: 32, 10: 40, 12: 48, 16: 64 } as const

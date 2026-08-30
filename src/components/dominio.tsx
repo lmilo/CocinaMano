@@ -3,10 +3,26 @@ import { Text, View } from 'react-native'
 import { radius, space } from '../constants/tokens'
 import { estadoDeCaducidad, textoCaducidad, type EstadoReloj } from '../lib/caducidad'
 import type { RecetaEvaluada } from '../lib/coincidencia'
-import type { Producto } from '../lib/dominio'
+import type { Categoria, Producto } from '../lib/dominio'
 import { useTema } from '../lib/tema'
 import { formatearCantidad } from '../lib/unidades'
 import { Chip, ICONO_CATEGORIA, ICONO_RELOJ, NOMBRE_CATEGORIA, Presionable, Tarjeta } from './ui'
+
+/** El color del marco de una categoría. `otro` no lleva: no tiene identidad que marcar. */
+export function useColorCategoria(categoria: Categoria): string | null {
+  const { c } = useTema()
+  const mapa: Record<Categoria, string> = {
+    nevera: c.catNevera,
+    congelador: c.catCongelador,
+    despensa: c.catDespensa,
+    especias: c.catEspecias,
+    panaderia: c.catPanaderia,
+    bebidas: c.catBebidas,
+    otro: c.catOtro,
+  }
+  const color = mapa[categoria]
+  return color === 'transparent' ? null : color
+}
 
 /** Los colores del reloj, resueltos contra el tema. Un solo sitio para los cuatro estados. */
 export function useColoresReloj(estado: EstadoReloj) {
@@ -42,6 +58,7 @@ export function TarjetaProducto({
   const { c, t } = useTema()
   const estado = estadoDeCaducidad(producto.caducaISO, ahora)
   const { color } = useColoresReloj(estado)
+  const colorCategoria = useColorCategoria(producto.categoria)
   const urgente = estado !== 'conTiempo'
 
   return (
@@ -64,12 +81,18 @@ export function TarjetaProducto({
           borderLeftColor: urgente ? color : c.borde,
         }}
       >
+        {/*
+          El marco dice DÓNDE está guardado, y el icono lo repite. Es refuerzo, no canal
+          único: ver `tokens.ts`, donde está por qué el color solo no bastaría.
+        */}
         <View
           style={{
             width: 42,
             height: 42,
             borderRadius: radius.sm,
             backgroundColor: c.tarjetaAlt,
+            borderWidth: colorCategoria ? 2 : 0,
+            borderColor: colorCategoria ?? 'transparent',
             alignItems: 'center',
             justifyContent: 'center',
           }}
@@ -77,7 +100,7 @@ export function TarjetaProducto({
           <MaterialCommunityIcons
             name={ICONO_CATEGORIA[producto.categoria]}
             size={22}
-            color={c.texto3}
+            color={colorCategoria ?? c.texto3}
           />
         </View>
 
@@ -175,3 +198,4 @@ export function TarjetaReceta({
     </Presionable>
   )
 }
+

@@ -8,6 +8,7 @@ import { radius, space } from '../../constants/tokens'
 import { detener, escuchar, hayReconocedor, pedirPermiso } from '../../lib/reconocedor'
 import { nuevoId, useAcciones } from '../../lib/store'
 import { useTema } from '../../lib/tema'
+import { NOMBRE_CATEGORIA } from '../../components/ui'
 import { formatearCantidad } from '../../lib/unidades'
 import { interpretarDictado, type ProductoDictado } from '../../lib/voz'
 import {
@@ -19,13 +20,24 @@ import {
   textoDuracion,
 } from '../../lib/vidautil'
 
+/** Pega dos tramos de dictado sin dejar espacios dobles ni un espacio al principio. */
+function juntar(previo: string, nuevo: string): string {
+  return `${previo} ${nuevo}`.replace(/\s+/g, ' ').trim()
+}
+
 export default function Dictar() {
   const { c, t, tq } = useTema()
   const router = useRouter()
   const acciones = useAcciones()
 
   const [escuchando, setEscuchando] = useState(false)
+  /**
+   * En modo continuo el reconocedor manda un resultado FINAL por cada tramo que consolida,
+   * no uno solo al terminar. Si se pisara `texto` con cada uno, dictar cinco productos
+   * dejaría solo el último. Por eso lo final se acumula y lo parcial se muestra aparte.
+   */
   const [texto, setTexto] = useState('')
+  const [parcial, setParcial] = useState('')
   const [problema, setProblema] = useState<string | null>(null)
   /**
    * Plazo puesto a mano para todo lo dictado. `undefined` = cada producto usa lo que la
@@ -39,13 +51,19 @@ export default function Dictar() {
 
   useEffect(() => () => cortar.current?.(), [])
 
-  async function alternarEscucha() {
-    if (escuchando) {
-      detener()
-      setEscuchando(false)
-      return
-    }
+  function pararEscucha() {
+    detener()
+    cortar.current?.()
+    cortar.current = null
+    // Lo que quedó a medio consolidar también cuenta: cortar justo ahí perdería la última
+    // palabra, que suele ser el producto que la persona acaba de sacar de la bolsa.
+    setTexto((previo) => juntar(previo, parcial))
+    setParcial('')
+    setEscuchando(false)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {})
+  }
 
+  async function empezarEscucha() {
     setProblema(null)
     if (!(await pedirPermiso())) {
       setProblema('Sin permiso del micrófono no puedo oírte. Puedes escribirlo abajo.')
@@ -53,14 +71,22 @@ export default function Dictar() {
     }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {})
-    setTexto('')
+    setParcial('')
     setEscuchando(true)
 
     cortar.current = escuchar({
       alTexto: (t, definitivo) => {
-        setTexto(t)
-        if (definitivo) setEscuchando(false)
+        // Un tramo consolidado se suma a lo dictado; lo parcial solo se muestra en vivo
+        // para que el usuario vea que la app lo está oyendo.
+        if (definitivo) {
+          setTexto((previo) => juntar(previo, t))
+          setParcial('')
+        } else {
+          setParcial(t)
+        }
       },
+      // En continuo, `end` llega cuando el sistema corta por su cuenta (batería, otra app).
+      // No es lo normal, y lo correcto es reflejarlo en el botón, no perder lo dictado.
       alTerminar: () => setEscuchando(false),
       alFallar: (mensaje) => {
         setProblema(mensaje)
@@ -77,11 +103,18 @@ export default function Dictar() {
     acciones.agregarProductos(
       productos.map((p) => {
         const sugerido = sugerirParaProducto(p.nombre)
-        const plazo = plazoManual !== undefined ? plazoManual : plazoMasCercano(sugerido.dias)
+        // Lo que el usuario DIJO manda sobre lo que la tabla calcula, y el control en lote
+        // manda sobre los dos: es el más explícito de los tres.
+        const plazo =
+          plazoManual !== undefined
+            ? plazoManual
+            : p.dias !== undefined
+              ? p.dias
+              : plazoMasCercano(sugerido.dias)
         return {
           id: nuevoId(),
           nombre: p.nombre,
-          categoria: sugerido.categoria,
+          categoria: p.categoria ?? sugerido.categoria,
           cantidad: p.cantidad,
           unidad: p.unidad,
           precioUnitario: 0,
@@ -97,13 +130,19 @@ export default function Dictar() {
     <Pantalla titulo="Dictar el mercado" apoyo="Con las manos ocupadas, que es como se guarda">
       <View style={{ paddingHorizontal: space[5], gap: space[4] }}>
         {disponible ? (
+          /*
+            DOS BOTONES DISTINTOS, no uno que alterna. La escucha ya no se corta sola con el
+            silencio, así que el usuario tiene que saber sin dudar cuál es el que la
+            termina: un botón que cambia de significado bajo el dedo es justo lo que hace
+            que alguien lo toque de más y pierda lo que llevaba dictado.
+          */
           <Presionable
-            onPress={alternarEscucha}
+            onPress={escuchando ? pararEscucha : empezarEscucha}
             accessibilityRole="button"
-            accessibilityLabel={escuchando ? 'Dejar de oír' : 'Empezar a dictar'}
+            accessibilityLabel={escuchando ? 'Ya terminé de dictar' : 'Empezar a dictar'}
             accessibilityState={{ selected: escuchando }}
             style={{
-              minHeight: 120,
+              minHeight: 132,
               borderRadius: radius.md,
               backgroundColor: escuchando ? c.primario : c.tarjeta,
               borderColor: escuchando ? c.primario : c.bordeFuerte,
@@ -111,15 +150,26 @@ export default function Dictar() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: space[2],
+              paddingHorizontal: space[4],
             }}
           >
             <MaterialCommunityIcons
-              name={escuchando ? 'microphone' : 'microphone-outline'}
+              name={escuchando ? 'stop-circle-outline' : 'microphone-outline'}
               size={44}
               color={escuchando ? c.sobreOscuro : c.primario}
             />
-            <Text style={[t.cuerpoMed, { color: escuchando ? c.sobreOscuro : c.primario }]}>
-              {escuchando ? 'Te estoy oyendo…' : 'Toca y dicta'}
+            <Text style={[t.boton, { color: escuchando ? c.sobreOscuro : c.primario }]}>
+              {escuchando ? 'YA TERMINÉ' : 'TOCA Y DICTA'}
+            </Text>
+            <Text
+              style={[
+                t.apoyo,
+                { color: escuchando ? c.sobreOscuro : c.texto3, textAlign: 'center' },
+              ]}
+            >
+              {escuchando
+                ? 'Sigo oyendo aunque hagas pausas. Puedes decir todo el mercado seguido.'
+                : 'Di el producto, la cantidad y, si quieres, cuándo se vence'}
             </Text>
           </Presionable>
         ) : (
@@ -128,6 +178,12 @@ export default function Dictar() {
               El dictado no está disponible en este teléfono, pero puedes escribirlo abajo
               igual de rápido.
             </Text>
+          </Tarjeta>
+        )}
+
+        {escuchando && !!parcial && (
+          <Tarjeta style={{ borderColor: c.primario }}>
+            <Text style={[t.cuerpo, { color: c.texto3, fontStyle: 'italic' }]}>{parcial}…</Text>
           </Tarjeta>
         )}
 
@@ -145,7 +201,7 @@ export default function Dictar() {
             value={texto}
             onChangeText={setTexto}
             multiline
-            placeholder="Dos libras de arroz y una docena de huevos"
+            placeholder="Dos libras de pollo que se vence en tres días y un litro de leche para la nevera"
             placeholderTextColor={c.texto3}
             accessibilityLabel="Lo que dictaste"
             style={[
@@ -163,7 +219,8 @@ export default function Dictar() {
             ]}
           />
           <Text style={[t.apoyo, { color: c.texto3, marginTop: space[2] }]}>
-            Puedes corregirlo aquí antes de guardar.
+            Puedes corregirlo aquí antes de guardar. Entiendo la cantidad, dónde va
+            («para la nevera») y cuándo se vence («que dura una semana»).
           </Text>
         </View>
 
@@ -221,8 +278,16 @@ function FilaDictada({
 }) {
   const { c, t } = useTema()
   const sugerido = sugerirParaProducto(producto.nombre)
+  // Lo que el usuario DIJO se muestra distinto de lo que la app calculó: si dictó "vence
+  // en tres días", eso es un dato suyo y no una estimación, y merece decirse sin el "como".
+  const loDijo = producto.dias !== undefined
   const duracion =
-    plazoManual !== undefined ? etiquetaPlazo(plazoManual).toLowerCase() : textoDuracion(sugerido.dias)
+    plazoManual !== undefined
+      ? etiquetaPlazo(plazoManual).toLowerCase()
+      : loDijo
+        ? `se vence en ${producto.dias} ${producto.dias === 1 ? 'día' : 'días'}`
+        : textoDuracion(sugerido.dias)
+  const categoria = producto.categoria ?? sugerido.categoria
 
   return (
     <Tarjeta style={{ gap: space[2], padding: space[3] }}>
@@ -240,7 +305,10 @@ function FilaDictada({
         </Text>
       )}
       </View>
-      <Text style={[t.apoyo, { color: c.texto3 }]}>{duracion}</Text>
+      <Text style={[t.apoyo, { color: loDijo ? c.texto2 : c.texto3 }]}>
+        {NOMBRE_CATEGORIA[categoria]} · {duracion}
+        {producto.categoria || loDijo ? ' · lo dijiste tú' : ''}
+      </Text>
     </Tarjeta>
   )
 }

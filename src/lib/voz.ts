@@ -1,4 +1,4 @@
-import type { Unidad } from './dominio'
+import type { Categoria, Unidad } from './dominio'
 import { normalizarUnidad } from './unidades'
 
 /**
@@ -19,6 +19,90 @@ export type ProductoDictado = {
   unidad: Unidad
   /** No se reconoció una cantidad explícita; se asumió 1. */
   asumido: boolean
+  /** Dicha en voz alta ("para la nevera"). Si falta, la decide `vidautil.ts`. */
+  categoria?: Categoria
+  /** Días hasta que se vence, si el usuario los dijo ("se vence en tres días"). */
+  dias?: number
+}
+
+/**
+ * Dónde dijo el usuario que va. Se busca la frase completa, no la palabra suelta: "nevera"
+ * puede aparecer en cualquier parte, pero "para la nevera" es una instrucción.
+ */
+const LUGARES: { frases: readonly string[]; categoria: Categoria }[] = [
+  { frases: ['congelador', 'congelacion', 'para congelar'], categoria: 'congelador' },
+  { frases: ['nevera', 'refrigerador', 'refri'], categoria: 'nevera' },
+  { frases: ['despensa', 'alacena'], categoria: 'despensa' },
+  { frases: ['especias', 'condimentos'], categoria: 'especias' },
+  { frases: ['panaderia'], categoria: 'panaderia' },
+  { frases: ['bebidas'], categoria: 'bebidas' },
+]
+
+/** Palabras que introducen el lugar. Sin una de estas, "nevera" es parte del nombre. */
+const INTRO_LUGAR = ['para el', 'para la', 'en el', 'en la', 'a la', 'al', 'de la', 'del']
+
+/**
+ * Saca el lugar de la frase y devuelve el resto.
+ *
+ * Se exige el conector ("para la nevera") a propósito: sin él, dictar "queso de nevera"
+ * como nombre de producto perdería la palabra, y hay productos que llevan el lugar en el
+ * nombre.
+ */
+export function extraerCategoria(texto: string): { categoria?: Categoria; resto: string } {
+  for (const { frases, categoria } of LUGARES) {
+    for (const frase of frases) {
+      for (const intro of INTRO_LUGAR) {
+        const patron = `${intro} ${frase}`
+        const i = texto.indexOf(patron)
+        if (i !== -1) {
+          const resto = (texto.slice(0, i) + ' ' + texto.slice(i + patron.length)).replace(/\s+/g, ' ').trim()
+          return { categoria, resto }
+        }
+      }
+    }
+  }
+  return { resto: texto }
+}
+
+const DIAS_SUELTOS: Record<string, number> = {
+  hoy: 0, mañana: 1, manana: 1, pasado: 2,
+}
+
+const MULTIPLOS: Record<string, number> = {
+  dia: 1, dias: 1, semana: 7, semanas: 7, mes: 30, meses: 30, año: 365, años: 365, ano: 365, anos: 365,
+}
+
+/**
+ * Saca el vencimiento de la frase y devuelve el resto.
+ *
+ * Reconoce "se vence en tres días", "vence mañana", "dura una semana", "para dos días".
+ * NO inventa nada: si el usuario no dijo cuándo, esto devuelve `undefined` y la duración la
+ * calcula `vidautil.ts` a partir del nombre.
+ */
+export function extraerCaducidad(texto: string): { dias?: number; resto: string } {
+  // "(se) vence|caduca|dura (en|para) <cantidad> <unidad de tiempo>"
+  const conPlazo = texto.match(
+    /\b(?:se\s+)?(?:vence|vencen|caduca|caducan|dura|duran)\s+(?:en\s+|para\s+)?([\wáéíóúñ]+)\s+(dias?|d[ií]as?|semanas?|meses|mes|años?|anos?)\b/,
+  )
+  if (conPlazo) {
+    const n = Number(conPlazo[1]) || NUMEROS[conPlazo[1]] || 0
+    const factor = MULTIPLOS[conPlazo[2].replace('í', 'i')] ?? 1
+    if (n > 0) {
+      return { dias: Math.round(n * factor), resto: quitar(texto, conPlazo[0]) }
+    }
+  }
+
+  // "(se) vence mañana|hoy|pasado mañana"
+  const sinPlazo = texto.match(/\b(?:se\s+)?(?:vence|vencen|caduca|caducan)\s+(hoy|mañana|manana|pasado)\b/)
+  if (sinPlazo) {
+    return { dias: DIAS_SUELTOS[sinPlazo[1]] ?? 1, resto: quitar(texto, sinPlazo[0]) }
+  }
+
+  return { resto: texto }
+}
+
+function quitar(texto: string, trozo: string): string {
+  return texto.replace(trozo, ' ').replace(/\s+/g, ' ').trim()
 }
 
 const NUMEROS: Record<string, number> = {
@@ -94,7 +178,15 @@ function arrancaEntrada(palabra: string): boolean {
 
 /** Parsea UNA entrada ya separada. */
 export function parsearDictado(texto: string): ProductoDictado | null {
-  const palabras = normalizar(texto).split(' ').filter(Boolean)
+  // El lugar y el vencimiento salen PRIMERO: si se dejaran, "que se vence en tres días"
+  // terminaría dentro del nombre del producto.
+  const conLugar = extraerCategoria(normalizar(texto))
+  const conFecha = extraerCaducidad(conLugar.resto)
+
+  const palabras = conFecha.resto
+    .replace(/\b(que|se|y)\b\s*$/g, '')
+    .split(' ')
+    .filter(Boolean)
   if (palabras.length === 0) return null
 
   let i = 0
@@ -142,10 +234,12 @@ export function parsearDictado(texto: string): ProductoDictado | null {
   if (!nombre) return null
 
   return {
-    nombre,
+    nombre: nombre.replace(/\b(que|se|y)\b\s*$/, '').trim(),
     cantidad: cantidad ?? 1,
     unidad: unidad ?? 'unidades',
     asumido: cantidad === null,
+    ...(conLugar.categoria ? { categoria: conLugar.categoria } : {}),
+    ...(conFecha.dias !== undefined ? { dias: conFecha.dias } : {}),
   }
 }
 

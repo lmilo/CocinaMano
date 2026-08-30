@@ -82,6 +82,12 @@ export function escuchar({ alTexto, alTerminar, alFallar }: EscuchaOpciones): ((
     )
     suscripciones.push(m.addListener('end', () => alTerminar()))
     suscripciones.push(
+      m.addListener('speechend', () => {
+        // En modo continuo Android sigue escuchando después de una pausa. No se hace nada
+        // aquí a propósito: quien decide cuándo parar es el botón, no el silencio.
+      }),
+    )
+    suscripciones.push(
       m.addListener('error', (e: any) => {
         const codigo = e?.error ?? ''
         // 'no-speech' no es un fallo: es que el usuario no dijo nada. Tratarlo como error
@@ -97,7 +103,17 @@ export function escuchar({ alTexto, alTerminar, alFallar }: EscuchaOpciones): ((
     m.start({
       lang: 'es-CO',
       interimResults: true,
-      continuous: false,
+      /*
+        CONTINUO A PROPÓSITO. Con `continuous: false` el reconocedor se cierra en cuanto
+        detecta un silencio, y guardando el mercado uno hace pausas todo el tiempo: mira la
+        bolsa, saca lo siguiente, piensa cómo se llamaba. Que se corte solo obliga a volver
+        a tocar el micrófono en cada producto, que es justo la fricción que el dictado venía
+        a quitar.
+
+        A cambio, la escucha SOLO la termina el botón de parar. Por eso el botón tiene que
+        ser inequívoco y decir "Ya terminé", no ser el mismo que la arrancó.
+      */
+      continuous: true,
       // Sin esto Android abre su propio diálogo de dictado encima de la app.
       requiresOnDeviceRecognition: false,
       addsPunctuation: false,

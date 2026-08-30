@@ -112,3 +112,72 @@ describe('interpretarDictado', () => {
     expect(interpretarDictado('')).toEqual([])
   })
 })
+
+describe('el dictado entiende más que cantidad y nombre', () => {
+  it('capta el vencimiento dicho con plazo', () => {
+    expect(parsearDictado('dos libras de pollo que se vence en tres dias')).toMatchObject({
+      nombre: 'pollo',
+      cantidad: 2,
+      unidad: 'lb',
+      dias: 3,
+    })
+  })
+
+  it('entiende semanas y meses, no solo días', () => {
+    expect(parsearDictado('queso que dura una semana')).toMatchObject({ nombre: 'queso', dias: 7 })
+    expect(parsearDictado('conserva que vence en dos meses')).toMatchObject({ dias: 60 })
+  })
+
+  it('entiende "mañana" y "hoy"', () => {
+    expect(parsearDictado('tres tomates que vencen mañana')).toMatchObject({
+      nombre: 'tomates',
+      cantidad: 3,
+      dias: 1,
+    })
+    expect(parsearDictado('leche que se vence hoy')).toMatchObject({ dias: 0 })
+  })
+
+  it('capta dónde va', () => {
+    expect(parsearDictado('un litro de leche para la nevera')).toMatchObject({
+      nombre: 'leche',
+      unidad: 'L',
+      categoria: 'nevera',
+    })
+    expect(parsearDictado('pollo para el congelador')).toMatchObject({ categoria: 'congelador' })
+    expect(parsearDictado('arroz para la despensa')).toMatchObject({ categoria: 'despensa' })
+  })
+
+  it('capta las dos cosas juntas', () => {
+    expect(parsearDictado('dos libras de carne para el congelador que dura tres meses')).toMatchObject({
+      nombre: 'carne',
+      cantidad: 2,
+      unidad: 'lb',
+      categoria: 'congelador',
+      dias: 90,
+    })
+  })
+
+  it('NO se come el lugar cuando es parte del nombre', () => {
+    // Sin conector, "nevera" no es una instrucción.
+    const r = parsearDictado('torta nevada')
+    expect(r?.nombre).toBe('torta nevada')
+    expect(r?.categoria).toBeUndefined()
+  })
+
+  it('sin decir nada de eso, no inventa: lo decide la tabla de duraciones', () => {
+    const r = parsearDictado('dos libras de arroz')
+    expect(r?.dias).toBeUndefined()
+    expect(r?.categoria).toBeUndefined()
+  })
+
+  it('el nombre queda limpio, sin restos de la frase', () => {
+    for (const frase of [
+      'dos libras de pollo que se vence en tres dias',
+      'un litro de leche para la nevera',
+      'tres tomates que vencen mañana',
+    ]) {
+      const r = parsearDictado(frase)
+      expect(r?.nombre, frase).not.toMatch(/vence|nevera|dias|que\s*$/)
+    }
+  })
+})

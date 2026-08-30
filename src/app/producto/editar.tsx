@@ -5,6 +5,7 @@ import { Boton, Campo, Pantalla, Selector } from '../../components/ui'
 import { NOMBRE_CATEGORIA } from '../../components/ui'
 import { space } from '../../constants/tokens'
 import { comoISO, textoCaducidad } from '../../lib/caducidad'
+import { enmascararFecha, parseFechaEscrita } from '../../lib/fecha'
 import { CATEGORIAS, type Categoria, type Unidad } from '../../lib/dominio'
 import { nuevoId, useAcciones, useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
@@ -36,17 +37,6 @@ function enDias(dias: number): string {
   const d = new Date()
   d.setDate(d.getDate() + dias)
   return comoISO(d)
-}
-
-/** 'DD/MM/AAAA' → 'AAAA-MM-DD', o null si no es una fecha usable. */
-function parseFechaEscrita(texto: string): string | null {
-  const m = texto.trim().match(/^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/)
-  if (!m) return null
-  const [, d, mes, a] = m
-  const fecha = new Date(Number(a), Number(mes) - 1, Number(d))
-  // Rechaza fechas que no existen: el 31/02 se desborda a marzo y hay que notarlo.
-  if (fecha.getDate() !== Number(d) || fecha.getMonth() !== Number(mes) - 1) return null
-  return comoISO(fecha)
 }
 
 export default function EditarProducto() {
@@ -198,8 +188,11 @@ export default function EditarProducto() {
             <Campo
               etiqueta="La fecha del empaque"
               valor={fechaEscrita}
-              alCambiar={setFechaEscrita}
-              placeholder="DD/MM/AAAA"
+              // Las barras las pone la app: el usuario teclea 25122026 y sale 25/12/2026.
+              // Antes tenía que escribirlas él, con el teclado numérico abierto — o sea
+              // cambiando de teclado dos veces por dos caracteres que se deducen solos.
+              alCambiar={(v) => setFechaEscrita(enmascararFecha(v))}
+              placeholder="Día, mes y año"
               teclado="numeric"
             />
           )}
