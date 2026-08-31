@@ -17,7 +17,7 @@ import {
 import { radius, space } from '../../constants/tokens'
 import { RECETAS_BASE } from '../../lib/catalogo'
 import { evaluarRecetas } from '../../lib/coincidencia'
-import { useAcciones, useEstado } from '../../lib/store'
+import { nuevoId, useAcciones, useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { formatearCantidad } from '../../lib/unidades'
 
@@ -51,6 +51,29 @@ export default function DetalleProducto() {
     )
   }
 
+
+  /**
+   * Cuánto se puede gastar de un toque.
+   *
+   * Depende de la unidad: de algo que se cuenta se gasta 1 o 2; de algo a peso se gasta un
+   * cuarto o la mitad, porque nadie sabe cuántos gramos de arroz echó.
+   */
+  const tramos = (() => {
+    const q = producto.cantidad
+    if (producto.unidad === 'unidades') {
+      const lista = [{ etiqueta: '1', cantidad: 1 }]
+      if (q >= 2) lista.push({ etiqueta: '2', cantidad: 2 })
+      if (q >= 3) lista.push({ etiqueta: '3', cantidad: 3 })
+      lista.push({ etiqueta: 'Se acabó', cantidad: q })
+      return lista
+    }
+    return [
+      { etiqueta: 'Un poco', cantidad: Math.round(q * 0.25 * 100) / 100 },
+      { etiqueta: 'La mitad', cantidad: Math.round(q * 0.5 * 100) / 100 },
+      { etiqueta: 'Casi todo', cantidad: Math.round(q * 0.75 * 100) / 100 },
+      { etiqueta: 'Se acabó', cantidad: q },
+    ]
+  })()
 
   return (
     <Pantalla titulo={producto.nombre}>
@@ -96,6 +119,71 @@ export default function DetalleProducto() {
             <Text style={[t.apoyo, { color: c.texto3 }]}>Código {producto.codigoBarras}</Text>
           )}
         </Tarjeta>
+
+        {/*
+          GASTAR SIN RECETA, que es como se come casi siempre. Un desayuno de dos huevos no
+          va a estar anotado en ninguna receta, y si la despensa solo baja cuando se prepara
+          algo del catálogo, el inventario miente a los dos días y el match con él.
+
+          Los tramos son los que de verdad usa la gente —uno, dos, la mitad, se acabó— en vez
+          de un teclado numérico: con las manos sucias nadie teclea 0,75.
+        */}
+        {producto.cantidad > 0 && (
+          <View style={{ gap: space[2] }}>
+            <Text style={[t.rotulo, { color: c.texto3 }]}>GASTÉ</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space[2] }}>
+              {tramos.map((tramo) => (
+                <Presionable
+                  key={tramo.etiqueta}
+                  onPress={() => acciones.descontarProducto(producto.id, tramo.cantidad)}
+                  haptica
+                  accessibilityRole="button"
+                  accessibilityLabel={`Gasté ${tramo.etiqueta}`}
+                  style={{
+                    backgroundColor: c.tarjeta,
+                    borderColor: c.bordeFuerte,
+                    borderWidth: 1,
+                    borderRadius: radius.pill,
+                    paddingHorizontal: space[4],
+                    minHeight: 44,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={[t.apoyoMed, { color: c.texto2 }]}>{tramo.etiqueta}</Text>
+                </Presionable>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/*
+          En cero no se borra solo: quedarse ahí es la única señal de que hace falta
+          comprarlo, y de un toque pasa a la lista.
+        */}
+        {producto.cantidad === 0 && (
+          <Tarjeta style={{ gap: space[3], borderColor: c.estaSemana }}>
+            <Text style={[t.cuerpoMed, { color: c.texto }]}>Se acabó</Text>
+            <Text style={[t.apoyo, { color: c.texto3 }]}>
+              Sigue aquí en cero para que no se te olvide. ¿Lo mandas a la lista?
+            </Text>
+            <Boton
+              texto="Ponerlo en la lista"
+              icono="cart-plus"
+              onPress={() => {
+                acciones.agregarCompra({
+                  id: nuevoId(),
+                  nombre: producto.nombre,
+                  cantidad: null,
+                  unidad: null,
+                  comprado: false,
+                  creadoISO: new Date().toISOString(),
+                })
+                acciones.borrarProducto(producto.id)
+                router.back()
+              }}
+            />
+          </Tarjeta>
+        )}
 
         <View style={{ flexDirection: 'row', gap: space[3] }}>
           <View style={{ flex: 1 }}>

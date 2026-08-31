@@ -104,6 +104,36 @@ export function borrarProducto(estado: Estado, id: string): Estado {
   return { ...estado, productos: estado.productos.filter((p) => p.id !== id) }
 }
 
+/**
+ * Gastar parte de un producto.
+ *
+ * NO LO BORRA AL LLEGAR A CERO, y esa es la decisión que importa. Quitarlo solo sería
+ * cómodo y perdería la única señal de que ese producto hace falta: alguien lo tenía, se le
+ * acabó, y probablemente lo quiere comprar. Dejarlo en cero permite que la despensa lo
+ * muestre como "se acabó" y ofrezca mandarlo a la lista de un toque — que es lo que cierra
+ * el ciclo compras → despensa → cocina → compras.
+ *
+ * La cantidad llega en la unidad del propio producto; convertir es tarea de quien llama.
+ */
+export function descontarProducto(estado: Estado, id: string, cantidad: number): Estado {
+  return {
+    ...estado,
+    productos: estado.productos.map((p) =>
+      p.id === id
+        ? { ...p, cantidad: Math.max(0, Math.round((p.cantidad - cantidad) * 1000) / 1000) }
+        : p,
+    ),
+  }
+}
+
+/** Varios descuentos de una vez, como los de una receta recién preparada. */
+export function descontarVarios(
+  estado: Estado,
+  gastos: { id: string; cantidad: number }[],
+): Estado {
+  return gastos.reduce((e, g) => descontarProducto(e, g.id, g.cantidad), estado)
+}
+
 export function agregarReceta(estado: Estado, receta: Receta): Estado {
   return { ...estado, recetas: [...estado.recetas, receta] }
 }

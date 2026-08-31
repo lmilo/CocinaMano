@@ -110,6 +110,10 @@ export function useAcciones() {
     editarProducto: (id: string, cambios: Parameters<typeof A.editarProducto>[2]) =>
       aplicar((e) => A.editarProducto(e, id, cambios)),
     borrarProducto: (id: string) => aplicar((e) => A.borrarProducto(e, id)),
+    descontarProducto: (id: string, cantidad: number) =>
+      aplicar((e) => A.descontarProducto(e, id, cantidad)),
+    descontarVarios: (gastos: Parameters<typeof A.descontarVarios>[1]) =>
+      aplicar((e) => A.descontarVarios(e, gastos)),
 
     agregarReceta: (r: Parameters<typeof A.agregarReceta>[1]) =>
       aplicar((e) => A.agregarReceta(e, r)),

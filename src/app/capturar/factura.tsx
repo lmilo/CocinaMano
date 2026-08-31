@@ -3,9 +3,20 @@ import * as ImagePicker from 'expo-image-picker'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { ActivityIndicator, Text, TextInput, View } from 'react-native'
-import { Boton, Chip, Pantalla, Presionable, Selector, Tarjeta, Vacio } from '../../components/ui'
+import { Confirmar } from '../../components/Confirmar'
+import { SelectorCaducidad } from '../../components/SelectorCaducidad'
+import {
+  Boton,
+  Chip,
+  NOMBRE_CATEGORIA,
+  Pantalla,
+  Presionable,
+  Selector,
+  Tarjeta,
+  Vacio,
+} from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
-import type { Categoria, Unidad } from '../../lib/dominio'
+import { CATEGORIAS, type Categoria, type Unidad } from '../../lib/dominio'
 import { ErrorIA, IA_CONFIGURADA, leerFactura, type ProductoLeido } from '../../lib/ia'
 import { nuevoId, useAcciones } from '../../lib/store'
 import { useTema } from '../../lib/tema'
@@ -30,8 +41,13 @@ type Fase = 'inicio' | 'leyendo' | 'revision'
  */
 type EnRevision = ProductoLeido & {
   categoria: Categoria
-  /** Días hasta que se vence. `null` = no se vence. */
-  plazo: number | null
+  /**
+   * La fecha ya resuelta, no un plazo.
+   *
+   * Empezó siendo un plazo (2 días, 1 semana…) y se quedó corto: una conserva vence en tres
+   * meses y muchos empaques traen la fecha impresa. Guardar la fecha admite las dos cosas.
+   */
+  caducaISO: string | null
 }
 
 /**
@@ -66,7 +82,11 @@ export default function CapturarFactura() {
       setLeidos(
         productos.map((p) => {
           const sugerido = sugerirParaProducto(p.nombre)
-          return { ...p, categoria: sugerido.categoria, plazo: plazoMasCercano(sugerido.dias) }
+          return {
+            ...p,
+            categoria: sugerido.categoria,
+            caducaISO: fechaDesdePlazo(plazoMasCercano(sugerido.dias), new Date()),
+          }
         }),
       )
       setFase('revision')
@@ -107,16 +127,16 @@ export default function CapturarFactura() {
         unidad: p.unidad,
         // El recibo trae el precio TOTAL de la línea; la despensa guarda el unitario.
         precioUnitario: p.cantidad > 0 ? Math.round(p.precio / p.cantidad) : p.precio,
-        caducaISO: fechaDesdePlazo(p.plazo, ahora),
+        caducaISO: p.caducaISO,
         creadoISO,
       })),
     )
     router.back()
   }
 
-  /** Pone el mismo plazo en todo. Para el mercado que se guarda entero de una vez. */
-  function aplicarPlazoATodos(plazo: number | null) {
-    setLeidos((prev) => prev.map((p) => ({ ...p, plazo })))
+  /** Pone lo mismo en todo. Para el mercado que se guarda entero de una vez. */
+  function aplicarATodos(cambios: Partial<EnRevision>) {
+    setLeidos((prev) => prev.map((p) => ({ ...p, ...cambios })))
   }
 
   if (!IA_CONFIGURADA) {
@@ -185,17 +205,34 @@ export default function CapturarFactura() {
                 cálculo de la app —no la fecha del empaque— porque la app no sabe cómo se
                 guardó nada, y los términos de uso dicen exactamente eso.
               */}
-              <Tarjeta style={{ gap: space[3] }}>
-                <Text style={[t.cuerpoMed, { color: c.texto }]}>Cuánto le calculo a cada uno</Text>
-                <Text style={[t.apoyo, { color: c.texto3 }]}>
-                  Son duraciones típicas, no la fecha del empaque. Cámbialas abajo si sabes
-                  otra cosa, o ponles la misma a todas de un toque:
-                </Text>
+              <Tarjeta style={{ gap: space[4] }}>
+                <View style={{ gap: space[2] }}>
+                  <Text style={[t.cuerpoMed, { color: c.texto }]}>Lo que calculé para cada uno</Text>
+                  <Text style={[t.apoyo, { color: c.texto3 }]}>
+                    Las duraciones son típicas, no la fecha del empaque, y el lugar es donde
+                    suele guardarse. Corrígelo abajo producto por producto, o ponle lo mismo
+                    a todo de un toque:
+                  </Text>
+                </View>
+
                 <Selector
+                  etiqueta="A todos, cuánto duran"
                   opciones={PLAZOS.map((p) => String(p))}
                   valor="__ninguno__"
-                  alElegir={(v) => aplicarPlazoATodos(v === 'null' ? null : Number(v))}
+                  alElegir={(v) =>
+                    aplicarATodos({
+                      caducaISO: fechaDesdePlazo(v === 'null' ? null : Number(v), new Date()),
+                    })
+                  }
                   nombre={(v) => etiquetaPlazo(v === 'null' ? null : Number(v))}
+                />
+
+                <Selector
+                  etiqueta="A todos, dónde van"
+                  opciones={CATEGORIAS}
+                  valor={'__ninguno__' as Categoria}
+                  alElegir={(v) => aplicarATodos({ categoria: v })}
+                  nombre={(v) => NOMBRE_CATEGORIA[v]}
                 />
               </Tarjeta>
             </View>
@@ -338,15 +375,19 @@ function FilaRevision({
           </View>
         </View>
 
-        <View style={{ gap: space[2] }}>
-          <Text style={[t.rotulo, { color: c.texto3 }]}>CUÁNTO DURA</Text>
-          <Selector
-            opciones={PLAZOS.map((x) => String(x))}
-            valor={String(producto.plazo)}
-            alElegir={(v) => alCambiar({ plazo: v === 'null' ? null : Number(v) })}
-            nombre={(v) => etiquetaPlazo(v === 'null' ? null : Number(v))}
-          />
-        </View>
+        <Selector
+          etiqueta="Dónde va"
+          opciones={CATEGORIAS}
+          valor={producto.categoria}
+          alElegir={(v) => alCambiar({ categoria: v })}
+          nombre={(v) => NOMBRE_CATEGORIA[v]}
+        />
+
+        <SelectorCaducidad
+          etiquetaCampo="Cuándo se vence"
+          caducaISO={producto.caducaISO}
+          alCambiar={(fecha) => alCambiar({ caducaISO: fecha })}
+        />
 
         {producto.precio > 0 && (
           <Text style={[t.apoyo, { color: c.texto3 }]}>

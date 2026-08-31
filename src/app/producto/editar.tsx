@@ -1,43 +1,17 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
 import { Text, View } from 'react-native'
+import { SelectorCaducidad } from '../../components/SelectorCaducidad'
 import { Boton, Campo, Pantalla, Selector } from '../../components/ui'
 import { NOMBRE_CATEGORIA } from '../../components/ui'
 import { space } from '../../constants/tokens'
-import { comoISO, textoCaducidad } from '../../lib/caducidad'
-import { enmascararFecha, parseFechaEscrita } from '../../lib/fecha'
+
+
 import { CATEGORIAS, type Categoria, type Unidad } from '../../lib/dominio'
 import { nuevoId, useAcciones, useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
 import { abreviar, UNIDADES } from '../../lib/unidades'
-import { plazoMasCercano, sugerirParaProducto, textoDuracion } from '../../lib/vidautil'
-
-/**
- * Plazos en vez de calendario.
- *
- * Nadie sabe la fecha exacta en que se vence una lechuga, y obligar a elegirla en un
- * calendario para algo que se sabe "como en una semana" es fricción pura. El empaque que sí
- * trae fecha se escribe a mano abajo.
- */
-const PLAZOS = ['sin', '2', '3', '5', '7', '15', '30', 'otra'] as const
-type Plazo = (typeof PLAZOS)[number]
-
-const NOMBRE_PLAZO: Record<Plazo, string> = {
-  sin: 'No se vence',
-  '2': 'En 2 días',
-  '3': 'En 3 días',
-  '5': 'En 5 días',
-  '7': 'En 1 semana',
-  '15': 'En 15 días',
-  '30': 'En 1 mes',
-  otra: 'Otra fecha',
-}
-
-function enDias(dias: number): string {
-  const d = new Date()
-  d.setDate(d.getDate() + dias)
-  return comoISO(d)
-}
+import { fechaDesdePlazo, plazoMasCercano, sugerirParaProducto, textoDuracion } from '../../lib/vidautil'
 
 export default function EditarProducto() {
   const { c, t } = useTema()
@@ -59,7 +33,7 @@ export default function EditarProducto() {
   const [cantidad, setCantidad] = useState(String(existente?.cantidad ?? '1'))
   const [unidad, setUnidad] = useState<Unidad>(existente?.unidad ?? 'unidades')
   const [precio, setPrecio] = useState(existente?.precioUnitario ? String(existente.precioUnitario) : '')
-  const [plazo, setPlazo] = useState<Plazo>(existente?.caducaISO ? 'otra' : 'sin')
+  const [caducaISO, setCaducaISO] = useState<string | null>(existente?.caducaISO ?? null)
   /**
    * Mientras el usuario no toque el plazo ni la categoría, la app los propone a partir del
    * nombre. En cuanto los toca, deja de meterse: lo que él eligió manda.
@@ -72,26 +46,11 @@ export default function EditarProducto() {
   useEffect(() => {
     if (!nombre.trim()) return
     if (!tocoCategoria) setCategoria(sugerido.categoria)
-    if (!tocoPlazo) {
-      const p = plazoMasCercano(sugerido.dias)
-      setPlazo(p === null ? 'sin' : (String(p) as Plazo))
-    }
+    if (!tocoPlazo) setCaducaISO(fechaDesdePlazo(plazoMasCercano(sugerido.dias), new Date()))
   }, [nombre, sugerido, tocoCategoria, tocoPlazo])
-  const [fechaEscrita, setFechaEscrita] = useState(() => {
-    if (!existente?.caducaISO) return ''
-    const [a, m, d] = existente.caducaISO.split('-')
-    return `${d}/${m}/${a}`
-  })
 
-  const caducaISO = useMemo(() => {
-    if (plazo === 'sin') return null
-    if (plazo === 'otra') return parseFechaEscrita(fechaEscrita)
-    return enDias(Number(plazo))
-  }, [plazo, fechaEscrita])
-
-  const fechaInvalida = plazo === 'otra' && fechaEscrita.trim() !== '' && caducaISO === null
   const cantidadNum = Number(cantidad.replace(',', '.'))
-  const valido = nombre.trim().length > 0 && cantidadNum > 0 && !fechaInvalida
+  const valido = nombre.trim().length > 0 && cantidadNum > 0
 
   function guardar() {
     const datos = {
@@ -172,46 +131,19 @@ export default function EditarProducto() {
           placeholder="Para estimar cuánto cuesta un plato"
         />
 
-        <View style={{ gap: space[3] }}>
-          <Selector
-            etiqueta="Cuándo se vence"
-            opciones={PLAZOS}
-            valor={plazo}
-            alElegir={(v) => {
-              setTocoPlazo(true)
-              setPlazo(v)
-            }}
-            nombre={(p) => NOMBRE_PLAZO[p]}
-          />
+        <SelectorCaducidad
+          caducaISO={caducaISO}
+          alCambiar={(f) => {
+            setTocoPlazo(true)
+            setCaducaISO(f)
+          }}
+        />
 
-          {plazo === 'otra' && (
-            <Campo
-              etiqueta="La fecha del empaque"
-              valor={fechaEscrita}
-              // Las barras las pone la app: el usuario teclea 25122026 y sale 25/12/2026.
-              // Antes tenía que escribirlas él, con el teclado numérico abierto — o sea
-              // cambiando de teclado dos veces por dos caracteres que se deducen solos.
-              alCambiar={(v) => setFechaEscrita(enmascararFecha(v))}
-              placeholder="Día, mes y año"
-              teclado="numeric"
-            />
-          )}
-
-          {fechaInvalida && (
-            <Text style={[t.apoyo, { color: c.vencido }]}>
-              Esa fecha no existe. Escríbela como 25/12/2026.
-            </Text>
-          )}
-
-          {caducaISO && (
-            <Text style={[t.apoyo, { color: c.texto3 }]}>
-              {textoCaducidad(caducaISO, new Date())}
-              {!tocoPlazo && sugerido.dias !== null
-                ? ` · lo calculé yo, ${textoDuracion(sugerido.dias)}`
-                : ''}
-            </Text>
-          )}
-        </View>
+        {!tocoPlazo && caducaISO && sugerido.dias !== null && (
+          <Text style={[t.apoyo, { color: c.texto3 }]}>
+            Lo calculé yo: {textoDuracion(sugerido.dias)}.
+          </Text>
+        )}
 
         <View style={{ gap: space[3], marginTop: space[3] }}>
           <Boton texto="Guardar" icono="check" onPress={guardar} deshabilitado={!valido} />

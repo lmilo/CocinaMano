@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useMemo, useState } from 'react'
 import { Text, View } from 'react-native'
 import { Confirmar } from '../../components/Confirmar'
+import { GastarIngredientes, gastosDe } from '../../components/GastarIngredientes'
 import { InsigniaCoincidencia } from '../../components/dominio'
 import { Boton, Pantalla, Presionable, Seccion, Tarjeta, Vacio } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
@@ -51,6 +52,7 @@ export default function DetalleReceta() {
 
   const [porciones, setPorciones] = useState(receta?.porciones ?? 2)
   const [confirmando, setConfirmando] = useState(false)
+  const [gastando, setGastando] = useState(false)
 
   const evaluada = useMemo(() => {
     if (!receta) return null
@@ -204,18 +206,28 @@ export default function DetalleReceta() {
               router.push({ pathname: '/receta/preparar', params: { id: receta.id, porciones } })
             }
           />
+          <Boton
+            texto="Ya la hice: bajar lo que gasté"
+            icono="basket-minus-outline"
+            variante="contorno"
+            onPress={() => setGastando(true)}
+          />
           <Tarjeta style={{ gap: space[2] }}>
             <Text style={[t.apoyo, { color: c.texto3 }]}>
               {preparada ? 'Qué tal te quedó' : 'Califícala cuando la pruebes'}
             </Text>
             <Estrellas
               valor={preparada?.estrellas ?? 0}
-              alElegir={(n) =>
+              alElegir={(n) => {
                 acciones.marcarPreparada(receta.id, {
                   cuandoISO: new Date().toISOString(),
                   estrellas: n,
                 })
-              }
+                // Calificar es la señal de que se cocinó de verdad. Se aprovecha para
+                // ofrecer bajar lo gastado, que es lo único que mantiene honesta la
+                // despensa. Solo la primera vez: recalificar no vuelve a descontar.
+                if (!preparada) setGastando(true)
+              }}
             />
           </Tarjeta>
 
@@ -243,6 +255,16 @@ export default function DetalleReceta() {
           )}
         </View>
       </Seccion>
+
+      <GastarIngredientes
+        visible={gastando}
+        gastos={gastosDe(evaluada, porciones)}
+        onConfirmar={(gastos) => {
+          setGastando(false)
+          if (gastos.length > 0) acciones.descontarVarios(gastos)
+        }}
+        onSaltar={() => setGastando(false)}
+      />
 
       <Confirmar
         visible={confirmando}

@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useMemo, useState } from 'react'
-import { Text, View } from 'react-native'
+import { Text, TextInput, View } from 'react-native'
 import { TarjetaProducto, useColorCategoria } from '../../components/dominio'
 import {
   ICONO_CATEGORIA,
@@ -16,6 +16,7 @@ import { estadoDeCaducidad } from '../../lib/caducidad'
 import { CATEGORIAS, type Categoria, type Producto } from '../../lib/dominio'
 import { useEstado } from '../../lib/store'
 import { useTema } from '../../lib/tema'
+import { palabras, raices } from '../../lib/texto'
 
 type Agrupacion = 'urgencia' | 'categoria'
 
@@ -204,6 +205,7 @@ export default function Despensa() {
   const [plegados, setPlegados] = useState<Set<string>>(new Set())
   /** `null` = todos los lugares. Solo aplica agrupando por lugar. */
   const [lugar, setLugar] = useState<Categoria | null>(null)
+  const [consulta, setConsulta] = useState('')
 
   const ahora = useMemo(() => new Date(), [])
 
@@ -230,12 +232,25 @@ export default function Despensa() {
   )
 
   const visibles = useMemo(() => {
-    const base = soloUrgentes ? urgentes : estado.productos
+    let base = soloUrgentes ? urgentes : estado.productos
+
+    // La búsqueda manda sobre todo lo demás: quien escribe "pollo" quiere ver el pollo,
+    // esté donde esté y se venza cuando se venza.
+    const buscadas = palabras(consulta)
+    if (buscadas.length > 0) {
+      base = base.filter((p) => {
+        const propias = new Set<string>()
+        for (const w of palabras(p.nombre)) for (const r of raices(w)) propias.add(r)
+        return buscadas.every((b) => raices(b).some((r) => propias.has(r)))
+      })
+      return base
+    }
+
     // El filtro de lugar solo tiene sentido viendo por lugar: en la vista por urgencia
     // esconder media despensa sería esconder comida sin que nadie lo pidiera.
     if (agrupacion !== 'categoria' || lugar === null) return base
     return base.filter((p) => p.categoria === lugar)
-  }, [soloUrgentes, urgentes, estado.productos, agrupacion, lugar])
+  }, [soloUrgentes, urgentes, estado.productos, agrupacion, lugar, consulta])
 
   /** Las categorías que de verdad tienen algo: no se ofrece filtrar por una vacía. */
   const conProductos = useMemo(
@@ -287,6 +302,46 @@ export default function Despensa() {
 
       <BarraDeEntrada />
 
+      {/* Con la despensa llena, encontrar algo concreto por desplazamiento no es viable. */}
+      {total > 0 && (
+        <View style={{ paddingHorizontal: space[5], marginBottom: space[4] }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: space[2],
+              backgroundColor: c.tarjeta,
+              borderColor: c.bordeFuerte,
+              borderWidth: 1,
+              borderRadius: radius.lg,
+              paddingHorizontal: space[3],
+              minHeight: 52,
+            }}
+          >
+            <MaterialCommunityIcons name="magnify" size={20} color={c.texto3} />
+            <TextInput
+              value={consulta}
+              onChangeText={setConsulta}
+              placeholder="Buscar en la despensa"
+              placeholderTextColor={c.texto3}
+              accessibilityLabel="Buscar en la despensa"
+              returnKeyType="search"
+              style={[t.cuerpo, { flex: 1, color: c.texto, paddingVertical: space[2] }]}
+            />
+            {consulta.length > 0 && (
+              <Presionable
+                onPress={() => setConsulta('')}
+                accessibilityRole="button"
+                accessibilityLabel="Borrar la búsqueda"
+                style={{ padding: space[1] }}
+              >
+                <MaterialCommunityIcons name="close-circle" size={20} color={c.texto3} />
+              </Presionable>
+            )}
+          </View>
+        </View>
+      )}
+
       {total === 0 ? (
         <Vacio>
           Tu despensa está vacía. Agrega lo que tienes en casa y aquí verás qué se está por
@@ -314,7 +369,11 @@ export default function Despensa() {
           </View>
 
           {visibles.length === 0 ? (
-            <Vacio>Nada por vencerse. Toca la banda de arriba para ver toda la despensa.</Vacio>
+            <Vacio>
+              {consulta.trim()
+                ? `No tienes nada que se llame «${consulta.trim()}».`
+                : 'Nada por vencerse. Toca la banda de arriba para ver toda la despensa.'}
+            </Vacio>
           ) : (
             grupos.map((g) => (
               <Grupo

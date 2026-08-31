@@ -6,6 +6,8 @@ import {
   alternarComprado,
   borrarProducto,
   borrarReceta,
+  descontarProducto,
+  descontarVarios,
   editarProducto,
   ESTADO_INICIAL,
   Estado,
@@ -162,5 +164,49 @@ describe('inmutabilidad', () => {
     agregarCompra(antes, item('Sal'))
     recordarCodigo(antes, '123', 'X')
     expect(antes).toEqual(copia)
+  })
+})
+
+describe('gastar lo que se cocina', () => {
+  it('resta en la unidad del producto', () => {
+    let e = agregarProducto(ESTADO_INICIAL, prod('Arroz', 1000, 'g'))
+    e = descontarProducto(e, e.productos[0].id, 250)
+    expect(e.productos[0].cantidad).toBe(750)
+  })
+
+  it('NO borra al llegar a cero: queda en cero', () => {
+    // Quitarlo perdería la única señal de que hace falta comprarlo.
+    let e = agregarProducto(ESTADO_INICIAL, prod('Leche', 1, 'L'))
+    e = descontarProducto(e, e.productos[0].id, 1)
+    expect(e.productos).toHaveLength(1)
+    expect(e.productos[0].cantidad).toBe(0)
+  })
+
+  it('no baja de cero aunque se gaste de más', () => {
+    let e = agregarProducto(ESTADO_INICIAL, prod('Leche', 1, 'L'))
+    e = descontarProducto(e, e.productos[0].id, 5)
+    expect(e.productos[0].cantidad).toBe(0)
+  })
+
+  it('descuenta varios de una vez, como al terminar una receta', () => {
+    let e = agregarProductos(ESTADO_INICIAL, [prod('Arroz', 1000, 'g'), prod('Sal', 500, 'g')])
+    const [arroz, sal] = e.productos
+    e = descontarVarios(e, [
+      { id: arroz.id, cantidad: 300 },
+      { id: sal.id, cantidad: 10 },
+    ])
+    expect(e.productos.map((p) => p.cantidad)).toEqual([700, 490])
+  })
+
+  it('no toca a los demás', () => {
+    let e = agregarProductos(ESTADO_INICIAL, [prod('Arroz', 1000, 'g'), prod('Sal', 500, 'g')])
+    e = descontarProducto(e, e.productos[0].id, 100)
+    expect(e.productos[1].cantidad).toBe(500)
+  })
+
+  it('redondea sin arrastrar decimales de coma flotante', () => {
+    let e = agregarProducto(ESTADO_INICIAL, prod('Aceite', 1, 'L'))
+    e = descontarProducto(e, e.productos[0].id, 0.3)
+    expect(e.productos[0].cantidad).toBe(0.7)
   })
 })
