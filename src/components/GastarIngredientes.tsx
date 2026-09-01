@@ -2,9 +2,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native'
 import { radius, sombra, space } from '../constants/tokens'
-import { escalar, type RecetaEvaluada } from '../lib/coincidencia'
+import type { RecetaEvaluada } from '../lib/coincidencia'
+import { type Gasto, gastosDe } from '../lib/gastos'
+
+// Se reexportan: las pantallas los importan desde aquí.
+export { gastosDe, type Gasto }
 import { useTema } from '../lib/tema'
-import { convertir, formatearCantidad } from '../lib/unidades'
 import { Boton } from './ui'
 
 /**
@@ -22,43 +25,6 @@ import { Boton } from './ui'
  * cuya unidad es convertible. De "sal" en unidades y "una cucharadita" no se puede restar
  * nada sensato, y fingir que sí ensuciaría el inventario.
  */
-
-export type Gasto = {
-  productoId: string
-  nombre: string
-  cantidad: number
-  /** Cómo se le muestra al usuario, ya en la unidad del producto. */
-  texto: string
-  incluido: boolean
-}
-
-/** Los ingredientes de una receta que se pueden descontar de verdad. */
-export function gastosDe(evaluada: RecetaEvaluada, porciones: number): Gasto[] {
-  const gastos: Gasto[] = []
-
-  for (const i of evaluada.ingredientes) {
-    if (!i.producto) continue
-
-    const pedido = escalar(i.ingrediente.cantidad, evaluada.receta.porciones, porciones)
-    const enUnidadDelProducto = convertir(pedido, i.ingrediente.unidad, i.producto.unidad)
-    if (enUnidadDelProducto === null || enUnidadDelProducto <= 0) continue
-
-    // Nunca se resta más de lo que hay: si la receta pedía más de lo disponible, se gasta
-    // lo que quedaba y punto.
-    const cantidad = Math.min(enUnidadDelProducto, i.producto.cantidad)
-    if (cantidad <= 0) continue
-
-    gastos.push({
-      productoId: i.producto.id,
-      nombre: i.producto.nombre,
-      cantidad,
-      texto: formatearCantidad(cantidad, i.producto.unidad),
-      incluido: true,
-    })
-  }
-
-  return gastos
-}
 
 export function GastarIngredientes({
   visible,

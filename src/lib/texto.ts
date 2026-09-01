@@ -38,11 +38,27 @@ export function raices(palabra: string): string[] {
   return out
 }
 
-/** True si alguna palabra del nombre coincide, por raíz, con alguno de los términos dados. */
+/**
+ * True si el nombre menciona alguno de los términos dados.
+ *
+ * LOS TÉRMINOS DE VARIAS PALABRAS SE COMPARAN COMO FRASE. Antes esto partía todo en
+ * palabras sueltas, así que un término con espacio —"avena en hojuelas", "leche en polvo"—
+ * era INALCANZABLE: nunca coincidía con nada. La consecuencia real es que la avena seca
+ * caía en la regla de lácteos por la palabra "avena" y terminaba en la nevera con cinco
+ * días de vida, avisando de un vencimiento que no existe.
+ */
 export function mencionaAlguno(nombre: string, terminos: readonly string[]): boolean {
+  const normalizado = normalizar(nombre)
+
   const propias = new Set<string>()
   for (const p of palabras(nombre)) {
     for (const r of raices(p)) propias.add(r)
   }
-  return terminos.some((t) => raices(normalizar(t)).some((r) => propias.has(r)))
+
+  return terminos.some((t) => {
+    const termino = normalizar(t)
+    // Con espacio es una frase: se busca dentro del nombre completo.
+    if (termino.includes(' ')) return normalizado.includes(termino)
+    return raices(termino).some((r) => propias.has(r))
+  })
 }

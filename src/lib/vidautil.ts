@@ -46,6 +46,8 @@ const REGLAS: readonly Regla[] = [
   { terminos: ['leche en polvo', 'polvo'], dias: null, categoria: 'despensa' },
   { terminos: ['atun', 'sardina', 'enlatado', 'lata', 'conserva'], dias: null, categoria: 'despensa' },
   { terminos: ['salsa', 'mayonesa', 'mostaza', 'vinagre'], dias: null, categoria: 'despensa' },
+  // La avena SECA le gana a la bebida de avena, que cae en lácteos por la misma palabra.
+  { terminos: ['avena en hojuelas', 'hojuelas', 'avena molida'], dias: null, categoria: 'despensa' },
 
   // ── Lo más perecedero ─────────────────────────────────────────────────
   { terminos: ['pescado', 'tilapia', 'trucha', 'salmon', 'camaron', 'mojarra'], dias: 2, categoria: 'nevera' },
@@ -88,7 +90,7 @@ const REGLAS: readonly Regla[] = [
   { terminos: ['cafe', 'chocolate', 'aromatica'], dias: null, categoria: 'bebidas' },
 
   // ── Despensa seca ─────────────────────────────────────────────────────
-  { terminos: ['arroz', 'pasta', 'espagueti', 'macarron', 'harina', 'azucar', 'panela', 'aceite', 'lenteja', 'frijol', 'garbanzo', 'maiz', 'avena en hojuelas', 'cereal'], dias: null, categoria: 'despensa' },
+  { terminos: ['arroz', 'pasta', 'espagueti', 'macarron', 'harina', 'azucar', 'panela', 'aceite', 'lenteja', 'frijol', 'garbanzo', 'maiz', 'cereal'], dias: null, categoria: 'despensa' },
 ]
 
 /**

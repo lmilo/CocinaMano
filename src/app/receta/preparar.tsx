@@ -54,6 +54,23 @@ export default function Preparar() {
   const ultimo = n >= pasos.length - 1
   const paso = pasos[n]
 
+  /*
+    Una receta sin pasos no debería existir —el formulario exige uno y el Worker lo valida—
+    pero puede llegar de un respaldo editado a mano. Aquí NO se puede reventar: esta
+    pantalla va con `gestureEnabled: false`, así que el ErrorBoundary dejaría al usuario sin
+    gesto de vuelta, con las manos en la comida.
+  */
+  if (!paso) {
+    return (
+      <View style={{ flex: 1, backgroundColor: c.fondo, paddingTop: insets.top }}>
+        <Vacio>Esta receta no tiene pasos escritos.</Vacio>
+        <View style={{ paddingHorizontal: space[5] }}>
+          <Boton texto="Volver" variante="contorno" onPress={() => router.back()} />
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View
       style={{

@@ -53,22 +53,45 @@ export async function pedirPermisoAvisos(): Promise<boolean> {
   }
 }
 
-/** Qué se le dice al usuario ese día. Informa, nunca regaña. */
-export function textoDelAviso(productos: Producto[]): { titulo: string; cuerpo: string } {
+/**
+ * Qué se le dice al usuario ese día. Informa, nunca regaña.
+ *
+ * EL PLAZO SE CALCULA, NO SE ASUME. Antes decía "se vence mañana" fijo, y como el aviso
+ * sale `diasAviso` antes (3 por defecto), un producto que vencía el 10 disparaba el día 7
+ * un aviso que decía "mañana". La app mentía por tres días en su propia notificación —
+ * justo el dato por el que existe el aviso.
+ *
+ * `cuando` es el día en que se muestra, no el de hoy: se programa con antelación y hay que
+ * contar desde allí.
+ */
+export function textoDelAviso(productos: Producto[], cuando: Date): { titulo: string; cuerpo: string } {
+  const cuantosDias = (p: Producto) => (p.caducaISO ? diasHasta(p.caducaISO, cuando) : 0)
+
   if (productos.length === 1) {
     // Con uno solo se nombra: es mucho más útil que un contador y cabe de sobra.
     return {
-      titulo: `${productos[0].nombre} se vence mañana`,
-      cuerpo: 'Mira qué puedes cocinar con eso hoy.',
+      titulo: `${productos[0].nombre} ${enCuanto(cuantosDias(productos[0]))}`,
+      cuerpo: 'Mira qué puedes cocinar con eso.',
     }
   }
+
+  // Con varios manda el más urgente: es el que decide si esto hay que mirarlo hoy.
+  const antes = Math.min(...productos.map(cuantosDias))
   return {
-    titulo: `${productos.length} cosas se vencen mañana`,
+    titulo: `${productos.length} cosas ${enCuanto(antes, true)}`,
     cuerpo: productos
       .slice(0, 3)
       .map((p) => p.nombre)
       .join(', '),
   }
+}
+
+/** "se vence mañana", "se vence en 3 días". En plural cuando son varias cosas. */
+function enCuanto(dias: number, plural = false): string {
+  const verbo = plural ? 'se vencen' : 'se vence'
+  if (dias <= 0) return `${verbo} hoy`
+  if (dias === 1) return `${verbo} mañana`
+  return `${verbo} en ${dias} días`
 }
 
 /**
@@ -139,7 +162,7 @@ export async function reprogramarAvisos(
       // sonaría como un error de la app.
       if (cuando.getTime() <= ahora.getTime()) continue
 
-      const { titulo, cuerpo } = textoDelAviso(lista)
+      const { titulo, cuerpo } = textoDelAviso(lista, cuando)
       await m.scheduleNotificationAsync({
         content: { title: titulo, body: cuerpo },
         trigger: { type: m.SchedulableTriggerInputTypes.DATE, date: cuando },

@@ -40,6 +40,14 @@ type Fase = 'inicio' | 'leyendo' | 'revision'
  * editara los ocho productos uno por uno.
  */
 type EnRevision = ProductoLeido & {
+  /**
+   * Id propio de la fila.
+   *
+   * NO se puede keyear por índice: al borrar una fila las de abajo suben de posición, React
+   * reutiliza el componente y la siguiente hereda el estado del selector de fecha de la que
+   * se fue — con la fecha del anterior escrita en el campo y la suya propia guardada.
+   */
+  fila: string
   categoria: Categoria
   /**
    * La fecha ya resuelta, no un plazo.
@@ -84,6 +92,7 @@ export default function CapturarFactura() {
           const sugerido = sugerirParaProducto(p.nombre)
           return {
             ...p,
+            fila: nuevoId(),
             categoria: sugerido.categoria,
             caducaISO: fechaDesdePlazo(plazoMasCercano(sugerido.dias), new Date()),
           }
@@ -239,7 +248,7 @@ export default function CapturarFactura() {
 
             {leidos.map((p, n) => (
               <FilaRevision
-                key={n}
+                key={p.fila}
                 producto={p}
                 alCambiar={(cambios) =>
                   setLeidos((prev) => prev.map((x, k) => (k === n ? { ...x, ...cambios } : x)))

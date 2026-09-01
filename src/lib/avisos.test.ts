@@ -65,23 +65,30 @@ describe('agruparAvisos', () => {
 
 describe('textoDelAviso', () => {
   it('con uno solo lo nombra, que es más útil que un contador', () => {
-    const { titulo } = textoDelAviso([prod('Tomates', '2026-09-01')])
+    const { titulo } = textoDelAviso([prod('Tomates', '2026-09-01')], new Date(2026, 7, 31))
     expect(titulo).toBe('Tomates se vence mañana')
   })
 
   it('con varios cuenta y menciona los primeros', () => {
-    const { titulo, cuerpo } = textoDelAviso([
-      prod('Leche', '2026-09-01'),
-      prod('Yogur', '2026-09-01'),
-      prod('Queso', '2026-09-01'),
-      prod('Jamón', '2026-09-01'),
-    ])
+    const { titulo, cuerpo } = textoDelAviso(
+      [
+        prod('Leche', '2026-09-01'),
+        prod('Yogur', '2026-09-01'),
+        prod('Queso', '2026-09-01'),
+        prod('Jamón', '2026-09-01'),
+      ],
+      new Date(2026, 7, 31),
+    )
     expect(titulo).toBe('4 cosas se vencen mañana')
     expect(cuerpo).toBe('Leche, Yogur, Queso')
   })
 
   it('nunca regaña', () => {
-    const textos = [textoDelAviso([prod('Leche', '2026-09-01')]), textoDelAviso([prod('a', '2026-09-01'), prod('b', '2026-09-01')])]
+    const cuando = new Date(2026, 7, 31)
+    const textos = [
+      textoDelAviso([prod('Leche', '2026-09-01')], cuando),
+      textoDelAviso([prod('a', '2026-09-01'), prod('b', '2026-09-01')], cuando),
+    ]
     for (const t of textos) {
       expect(t.titulo).not.toContain('!')
       expect(t.cuerpo).not.toContain('!')
@@ -95,5 +102,33 @@ describe('los ajustes mandan', () => {
     // es `reprogramarAvisos`, que sale temprano. Esta prueba deja el contrato por escrito.
     expect(AJUSTES.avisarCaducidad).toBe(true)
     expect(agruparAvisos([prod('Leche', '2026-09-10')], AHORA, AJUSTES.diasAviso).size).toBe(1)
+  })
+})
+
+/**
+ * El aviso decía "se vence mañana" fijo, y sale `diasAviso` antes. Con el ajuste por
+ * defecto (3), algo que vencía el 10 disparaba el día 7 un aviso que decía "mañana": la
+ * app mentía por tres días en el único dato por el que existe el aviso.
+ */
+describe('el aviso dice el plazo de verdad', () => {
+  const leche = prod('Leche', '2026-09-10')
+
+  it('cuenta desde el día en que se muestra, no desde hoy', () => {
+    // El aviso de este producto sale el 7 (3 días antes). Ese día faltan 3.
+    expect(textoDelAviso([leche], new Date(2026, 8, 7)).titulo).toBe('Leche se vence en 3 días')
+    // Y si el ajuste fuera de 1 día, el aviso sale el 9 y ahí sí es mañana.
+    expect(textoDelAviso([leche], new Date(2026, 8, 9)).titulo).toBe('Leche se vence mañana')
+  })
+
+  it('el mismo día dice hoy', () => {
+    expect(textoDelAviso([leche], new Date(2026, 8, 10)).titulo).toBe('Leche se vence hoy')
+  })
+
+  it('con varios manda el más urgente', () => {
+    const titulo = textoDelAviso(
+      [prod('Leche', '2026-09-10'), prod('Pollo', '2026-09-08')],
+      new Date(2026, 8, 7),
+    ).titulo
+    expect(titulo).toBe('2 cosas se vencen mañana')
   })
 })

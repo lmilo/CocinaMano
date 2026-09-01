@@ -51,7 +51,9 @@ export default function GenerarReceta() {
    */
   const paraLaIA = useMemo(() => {
     return [...estado.productos]
-      .filter((p) => p.cantidad > 0)
+      // Lo ya vencido NO se manda: `coincidencia.ts` lo excluye de `aprovecha` porque
+      // proponer cocinarlo sería un mal consejo, y aquí además gastaría el cupo de quince.
+      .filter((p) => p.cantidad > 0 && estadoDeCaducidad(p.caducaISO, ahora) !== 'vencido')
       .sort((a, b) => {
         const ua = PESO_RELOJ[estadoDeCaducidad(a.caducaISO, ahora)]
         const ub = PESO_RELOJ[estadoDeCaducidad(b.caducaISO, ahora)]

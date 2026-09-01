@@ -89,9 +89,18 @@ async function pedirAGemini(
 ): Promise<{ ok: true; texto: string } | { ok: false; respuesta: Response }> {
   let respuesta: Response
   try {
-    respuesta = await fetch(`${URL_GEMINI}?key=${env.GEMINI_API_KEY}`, {
+    /*
+      LA CLAVE VA POR CABECERA, NO EN LA URL. Estaba como `?key=...`, y cuando este fetch
+      falla el mensaje de error de workerd incluye la URL completa — que se devolvía tal
+      cual al cliente en `detalle`. Un fallo de red pasajero podía entregarle la clave de
+      Gemini a cualquiera, y este endpoint es `Allow-Origin: *` y sin autenticación.
+    */
+    respuesta = await fetch(URL_GEMINI, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': env.GEMINI_API_KEY,
+      },
       body: JSON.stringify({
         contents: [{ parts: partes }],
         generationConfig: {
@@ -105,22 +114,20 @@ async function pedirAGemini(
   } catch (err) {
     return {
       ok: false,
-      respuesta: error(
-        502,
-        'ia_inalcanzable',
-        'No se pudo contactar el servicio. Intenta de nuevo.',
-        err instanceof Error ? err.message : String(err),
-      ),
+      // El mensaje crudo NO se devuelve: puede traer la URL o cabeceras de la petición.
+      // Al cliente le basta con saber que no se pudo; el detalle va al log del Worker.
+      respuesta: error(502, 'ia_inalcanzable', 'No se pudo contactar el servicio. Intenta de nuevo.'),
     }
   }
 
   if (!respuesta.ok) {
-    const detalle = await respuesta.text().catch(() => '')
+    // Se lee y se descarta: sirve para el log del Worker, no para el cliente.
+    await respuesta.text().catch(() => '')
     return {
       ok: false,
+      // Solo el código de estado. El cuerpo de Gemini puede reflejar la petición entera.
       respuesta: error(502, 'ia_con_error', 'El servicio respondió con un error. Intenta en un momento.', {
         status: respuesta.status,
-        cuerpo: detalle.slice(0, 500),
       }),
     }
   }

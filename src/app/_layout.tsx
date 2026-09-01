@@ -14,7 +14,7 @@ import { Stack, usePathname, useRouter } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { ReactNode, useEffect, useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { SincronizarAvisos } from '../components/avisos'
 import { VERSION_LEGAL } from '../constants/legal'
 import { radius, space } from '../constants/tokens'
@@ -102,9 +102,25 @@ function Guardia({ children }: { children: ReactNode }) {
     (!estado.configurado && ruta !== '/bienvenida' && ruta !== '/legal') ||
     (faltaAceptar && ruta !== '/legal')
 
-  if (cargando || redirigiendo) return <View style={{ flex: 1, backgroundColor: c.fondo }} />
-
-  return <>{children}</>
+  /*
+    EL NAVEGADOR SE MONTA SIEMPRE, y el velo va ENCIMA. Antes esto devolvía un <View> en
+    lugar de los hijos, así que mientras `redirigiendo` fuera true el <Stack> no existía —
+    y expo-router descarta en silencio las navegaciones encoladas cuando no hay navegador
+    montado (`routingQueue.run` vacía la cola y solo despacha `if (ref.current)`). El
+    `router.replace('/bienvenida')` del efecto de arriba podía perderse, dejando la ruta en
+    '/' y el velo puesto para siempre.
+  */
+  return (
+    <>
+      {children}
+      {(cargando || redirigiendo) && (
+        <View
+          style={[StyleSheet.absoluteFill, { backgroundColor: c.fondo }]}
+          pointerEvents="auto"
+        />
+      )}
+    </>
+  )
 }
 
 export default function RootLayout() {

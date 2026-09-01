@@ -23,6 +23,11 @@ google-services.json
 /android
 /ios
 
+# Tooling local de capturas. Apuntaba a la app Vue (localhost:5173/4173) y entró al repo
+# al reescribir este archivo en la migración. `scripts/icono.py` SÍ se versiona: genera los
+# iconos desde la marca y hace falta para reproducir el build.
+scripts/*.mjs
+
 # Editor
 .idea/
 *.swp

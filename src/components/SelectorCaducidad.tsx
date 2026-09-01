@@ -52,16 +52,24 @@ export function SelectorCaducidad({
   const { c, t, tq } = useTema()
 
   /**
-   * Qué opción está marcada. Se guarda aparte de la fecha porque dos plazos distintos
-   * pueden dar la misma fecha, y porque al elegir "otra" hay que quedarse ahí mientras el
-   * usuario teclea, aunque todavía no haya una fecha válida.
+   * Qué opción está marcada.
+   *
+   * SE DERIVA DEL VALOR salvo que el usuario haya elegido a mano. Con `useState` a secas se
+   * calculaba una sola vez: en "Agregar a la despensa" arrancaba en `null` → salía "No se
+   * vence" marcado, y cuando el nombre del producto fijaba una fecha ("pollo" → hoy+2), el
+   * chip seguía diciendo "No se vence" mientras la línea de abajo decía "se vence pasado
+   * mañana". Dos cosas contradiciéndose sobre el mismo dato.
    */
-  const [modo, setModo] = useState<string>(() => {
+  const [modoManual, setModoManual] = useState<string | null>(null)
+
+  const modoDerivado = (() => {
     if (!caducaISO) return 'null'
-    // Si la fecha coincide con un plazo redondo, se muestra ese; si no, es una fecha suya.
     const coincide = PLAZOS_LARGOS.find((p) => p !== null && fechaDesdePlazo(p, ahora) === caducaISO)
     return coincide !== undefined && coincide !== null ? String(coincide) : OTRA
-  })
+  })()
+
+  const modo = modoManual ?? modoDerivado
+  const setModo = setModoManual
 
   const [escrita, setEscrita] = useState(() => {
     if (!caducaISO) return ''

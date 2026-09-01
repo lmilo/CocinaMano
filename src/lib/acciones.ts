@@ -74,12 +74,23 @@ export function agregarProducto(estado: Estado, nuevo: Producto): Estado {
   const previo = estado.productos[i]
   const sumado = convertir(nuevo.cantidad, nuevo.unidad, previo.unidad) ?? 0
   const productos = [...estado.productos]
+
+  /*
+    EL PRECIO TAMBIÉN SE CONVIERTE, y esto costaba un error de 1000×. La cantidad pasaba
+    por `convertir` y el precio no: fundir "1 kg a $4.000 el kg" con "500 g a $8 el gramo"
+    dejaba 1,5 kg a $8 el kilo. El precio es POR UNIDAD, así que al cambiar de unidad hay
+    que aplicar el factor inverso — lo que vale un gramo por mil es lo que vale un kilo.
+  */
+  const unaUnidadNueva = convertir(1, nuevo.unidad, previo.unidad)
+  const precioConvertido =
+    unaUnidadNueva && unaUnidadNueva > 0 ? nuevo.precioUnitario / unaUnidadNueva : 0
+
   productos[i] = {
     ...previo,
     cantidad: Math.round((previo.cantidad + sumado) * 1000) / 1000,
     // El precio se queda con el de la compra más reciente: es el que refleja lo que cuesta
     // hoy reponerlo, que es la cifra útil para estimar un plato.
-    precioUnitario: nuevo.precioUnitario || previo.precioUnitario,
+    precioUnitario: precioConvertido ? Math.round(precioConvertido) : previo.precioUnitario,
   }
   return { ...estado, productos }
 }

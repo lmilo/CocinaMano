@@ -151,8 +151,22 @@ export async function leerRespaldo(): Promise<Estado | null> {
   if (datos?.app !== 'cocina-a-mano' || typeof datos.estado !== 'object' || datos.estado === null) {
     throw new ErrorRespaldo('Ese archivo no es un respaldo de Cocina a Mano.')
   }
-  if (datos.version > VERSION_RESPALDO) {
+  if (typeof datos.version !== 'number' || datos.version > VERSION_RESPALDO) {
     throw new ErrorRespaldo('Ese respaldo es de una versión más nueva de la app.')
+  }
+
+  /*
+    SE VALIDA EL CONTENIDO, NO SOLO EL SOBRE. Comprobar el nombre de la app y que `estado`
+    sea un objeto no basta: un respaldo truncado con `productos: null` pasaba la puerta, se
+    mezclaba sobre el estado inicial —donde `null` gana a `[]`— y luego TODAS las pantallas
+    reventaban en el primer `.filter`. Restaurar un archivo a medias no puede dejar la app
+    inservible sin decir por qué.
+  */
+  const listas = ['productos', 'recetas', 'compras'] as const
+  for (const clave of listas) {
+    if (!Array.isArray((datos.estado as Estado)[clave])) {
+      throw new ErrorRespaldo('Ese respaldo está incompleto o dañado.')
+    }
   }
 
   // Se mezcla contra el inicial para que un respaldo viejo, sin los campos que se hayan
