@@ -161,6 +161,7 @@ export default function RootLayout() {
         <Stack.Screen name="capturar/voz" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="receta/[id]" />
         <Stack.Screen name="receta/editar" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="receta/generar" options={{ animation: 'slide_from_bottom' }} />
         {/* El modo cocina entra desde abajo y sin gesto de vuelta: se sale por su propia
             X, para que un roce con la muñeca no saque al usuario a mitad de un sofrito. */}
         <Stack.Screen

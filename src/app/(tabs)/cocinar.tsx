@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router'
 import { useMemo, useState } from 'react'
 import { Text, TextInput, View } from 'react-native'
 import { TarjetaReceta } from '../../components/dominio'
-import { Pantalla, Presionable, Vacio } from '../../components/ui'
+import { Boton, Pantalla, Presionable, Vacio } from '../../components/ui'
 import { radius, space } from '../../constants/tokens'
 import { RECETAS_BASE } from '../../lib/catalogo'
 import { evaluarRecetas, type RecetaEvaluada } from '../../lib/coincidencia'
@@ -136,10 +136,14 @@ export default function Cocinar() {
           )}
         </View>
 
+        {/*
+          Inventar va antes que escribir: es lo que resuelve el momento en que la lista no
+          te sirvió, que es justo cuando alguien mira hacia aquí arriba.
+        */}
         <Presionable
-          onPress={() => router.push('/receta/editar')}
+          onPress={() => router.push('/receta/generar')}
           accessibilityRole="button"
-          accessibilityLabel="Escribir una receta"
+          accessibilityLabel="Que la IA invente una receta con lo que tengo"
           style={{
             width: tq.min,
             minHeight: tq.min,
@@ -149,7 +153,25 @@ export default function Cocinar() {
             justifyContent: 'center',
           }}
         >
-          <MaterialCommunityIcons name="notebook-plus-outline" size={22} color={c.sobreOscuro} />
+          <MaterialCommunityIcons name="chef-hat" size={22} color={c.sobreOscuro} />
+        </Presionable>
+
+        <Presionable
+          onPress={() => router.push('/receta/editar')}
+          accessibilityRole="button"
+          accessibilityLabel="Escribir una receta"
+          style={{
+            width: tq.min,
+            minHeight: tq.min,
+            borderRadius: radius.lg,
+            backgroundColor: c.tarjeta,
+            borderColor: c.bordeFuerte,
+            borderWidth: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <MaterialCommunityIcons name="notebook-plus-outline" size={22} color={c.primario} />
         </Presionable>
       </View>
 
@@ -186,11 +208,21 @@ export default function Cocinar() {
           </View>
 
           {visibles.length === 0 ? (
-            <Vacio>
-              {buscando
-                ? `Nada con «${consulta.trim()}». Prueba con otra palabra, o con el nombre de un ingrediente.`
-                : 'Nada en este filtro. Prueba con «Todas».'}
-            </Vacio>
+            <>
+              <Vacio>
+                {buscando
+                  ? `Nada con «${consulta.trim()}». Prueba con otra palabra, o con el nombre de un ingrediente.`
+                  : 'Nada en este filtro. Prueba con «Todas».'}
+              </Vacio>
+              <View style={{ paddingHorizontal: space[5] }}>
+                <Boton
+                  texto="Que inventen una con lo que tengo"
+                  icono="chef-hat"
+                  variante="contorno"
+                  onPress={() => router.push('/receta/generar')}
+                />
+              </View>
+            </>
           ) : (
             visibles.map((e) => (
               <TarjetaReceta
