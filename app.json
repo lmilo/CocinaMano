@@ -1,0 +1,88 @@
+{
+  "expo": {
+    "name": "Cocina a Mano",
+    "slug": "cocina-a-mano",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "cocinamano",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.crincon.cocinamano",
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#245239",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 140,
+          "backgroundColor": "#FAF6ED",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#14110D"
+          }
+        }
+      ],
+      "expo-image",
+      "expo-sharing",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Cocina a Mano usa la cámara para leer el código de barras del empaque y la factura del mercado.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Para elegir la foto de una factura que ya tomaste.",
+          "cameraPermission": "Para tomarle la foto a la factura del mercado."
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Para que puedas dictar el mercado con las manos ocupadas.",
+          "speechRecognitionPermission": "Para convertir en productos lo que dictas."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notificacion-icon.png",
+          "color": "#245239"
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "owner": "lmilo",
+    "icon": "./assets/images/icon.png",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "93f9e2c3-f20f-418a-8e4e-e57249df5165"
+      }
+    }
+  }
+}

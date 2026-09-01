@@ -2,26 +2,43 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, movil]
   pull_request:
 
 jobs:
-  verify:
+  verificar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Type-check + build
-        run: npm run build
+      # No hay `build`: una app de Expo no compila en CI sin EAS. Lo que sí se puede
+      # verificar aquí son los tipos y la lógica pura, que es donde vive el producto.
+      - name: Tipos
+        run: npx tsc --noEmit
 
-      - name: Unit tests
-        run: npm run test
+      - name: Pruebas
+        run: npm test
+
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: npm install
+
+      - name: Tipos del Worker
+        run: npx tsc --noEmit

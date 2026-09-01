@@ -1,30 +1,33 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
 
-node_modules
-dist
-dist-ssr
-*.local
+*.log
+npm-debug.*
+.DS_Store
+
+# Credenciales y firma
 .env
 .env.local
 .env.*.local
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+google-services.json
 
-# Local dev tooling (screenshots, one-off helpers)
-scripts/
+# Nativo generado por prebuild
+/android
+/ios
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Tooling local de capturas. Apuntaba a la app Vue (localhost:5173/4173) y entró al repo
+# al reescribir este archivo en la migración. `scripts/icono.py` SÍ se versiona: genera los
+# iconos desde la marca y hace falta para reproducir el build.
+scripts/*.mjs
+
+# Editor
+.idea/
+*.swp
